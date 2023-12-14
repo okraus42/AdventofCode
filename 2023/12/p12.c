@@ -6,7 +6,7 @@
 /*   By: okraus <okraus@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 09:02:42 by okraus            #+#    #+#             */
-/*   Updated: 2023/12/12 19:47:10 by okraus           ###   ########.fr       */
+/*   Updated: 2023/12/13 11:17:58 by okraus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -495,7 +495,7 @@ void	ok_update2(char **line, long long *ptot, int i, int j)
 	long long	t[3];
 	//int		c;
 
-	j = 0;
+	j = 38;
 	//c = 0;
 	while (line[j])
 	{
