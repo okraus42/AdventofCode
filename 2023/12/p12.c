@@ -6,7 +6,7 @@
 /*   By: okraus <okraus@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 09:02:42 by okraus            #+#    #+#             */
-/*   Updated: 2023/12/13 11:17:58 by okraus           ###   ########.fr       */
+/*   Updated: 2023/12/15 18:01:45 by okraus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -541,7 +541,7 @@ int	main(void)
 	total[1] = 0;
 	line = NULL;
 	i = 1;
-	line = ft_readfile("input", 65536);
+	line = ft_readfile("inputtest", 65536);
 	//ft_printf("%p\n", (void *)line);
 	//ft_printf("j = %i\n", j);
 	i = 0;

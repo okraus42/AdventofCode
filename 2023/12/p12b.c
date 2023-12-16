@@ -6,7 +6,7 @@
 /*   By: okraus <okraus@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 09:02:42 by okraus            #+#    #+#             */
-/*   Updated: 2023/12/12 17:31:08 by okraus           ###   ########.fr       */
+/*   Updated: 2023/12/15 18:58:33 by okraus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -231,148 +231,148 @@ void	ok_getnewline(char *newline, char *line)
 	newline[j] = 0;
 }
 
-void	ok_tests2b(char *str, int check[100])
-{
-	int	i;
-	int	t;
-	int	b;
+// void	ok_tests2b(char *str, int check[100])
+// {
+// 	int	i;
+// 	int	t;
+// 	int	b;
 
-	i = 0;
-	t = 0;
-	b = 0;
-	while (str[i])
-	{
-		//ft_printf("char %i = %c\n", i, str[i]);
-		if (str[i] == '#' || str[i] == '?')
-		{
-			//ft_printf("++t\n");
-			++t;
-		}
-		else if (i > 0 && (str[i - 1] == '#' || str[i - 1] == '?'))
-		{
-			//ft_printf("reset\n");
-			check[b] = t;
-			t = 0;
-			++b;
-		}
-		//ft_printf("%i %i %i\n", i > 0, str[i - 1] == '#', i > 0 && str[i - 1] == '#');
-		//ft_printf("%i %i %i\n", i, t, b);
-		++i;
-	}
-	if (t)
-	{
-		check[b] = t;
-		check[b + 1] = 0;
-		check[b + 2] = 0;
-	}
-	else
-	{
-		check[b] = 0;
-		check[b + 1] = 0;
-	}
-}
+// 	i = 0;
+// 	t = 0;
+// 	b = 0;
+// 	while (str[i])
+// 	{
+// 		//ft_printf("char %i = %c\n", i, str[i]);
+// 		if (str[i] == '#' || str[i] == '?')
+// 		{
+// 			//ft_printf("++t\n");
+// 			++t;
+// 		}
+// 		else if (i > 0 && (str[i - 1] == '#' || str[i - 1] == '?'))
+// 		{
+// 			//ft_printf("reset\n");
+// 			check[b] = t;
+// 			t = 0;
+// 			++b;
+// 		}
+// 		//ft_printf("%i %i %i\n", i > 0, str[i - 1] == '#', i > 0 && str[i - 1] == '#');
+// 		//ft_printf("%i %i %i\n", i, t, b);
+// 		++i;
+// 	}
+// 	if (t)
+// 	{
+// 		check[b] = t;
+// 		check[b + 1] = 0;
+// 		check[b + 2] = 0;
+// 	}
+// 	else
+// 	{
+// 		check[b] = 0;
+// 		check[b + 1] = 0;
+// 	}
+// }
 
-int	ok_checknum2(int numbers[100], int check[100], char *str, int i, int j, int k)
-{
-	ok_tests2b(str, check);
-	ft_printf("%.*CChecking %s i %i j %i k %i%C\n", 0xFFFFFF, str, i, j, k);
-	ft_printf("%.*CC[0] %i, C[1] %i, C[2] %i, C[3] %i, C[4] %i, C[5] %i%C\n", 0xFFFFFF, check[0], check[1], check[2], check[3], check[4], check[5]);
-	while (str[i] && str[i] != '?')
-	{
-		if (str[i] == '#')
-		{
-			if (numbers[j] > check[k])
-			{
-				ft_printf("%.*Cfailcheck1a %s i %i j %i k %i%C\n", 0xFF0000, str, i, j, k);
-				return (0);
-			}
-			while (str[i] == '#')
-				++i;
-			if (str[i] != '?')
-			{
-				if (numbers[j] != check[k])
-				{
-					ft_printf("%.*Cfailcheck1b %s i %i j %i k %i%C\n", 0xFF0000, str, i, j, k);
-					return (0);
-				}
-				++k;
-				++j;
-			}
-		}
-		else
-			++i;
-	}
-	ft_printf("passed check 1 %s i %i j %i k %i\n", str, i, j, k);
-	while (numbers[j])
-	{
-		if (!check[k] && !check[k + 1])
-		{
-			ft_printf("%.*Ccheck[%i] %i%C\n", 0xFF0000, k, check[k]);
-			ft_printf("%.*Cfailcheck2 %s i %i j %i k %i%C\n", 0xFF0000, str, i, j, k);
-			return (0);
-		}
-		if (check[k] > numbers[j])
-		{
-			check[k] -= (numbers[j] + 1);
-			++j;
-		}
-		else if (check[k] == numbers[j])
-		{
-			++j;
-			++k;
-		}
-		else
-			++k;
-	}
-	ft_printf("passed check 2 %s i %i j %i k %i\n", str, i, j, k);
-	if (str[i])
-	{
-		ft_printf("%.*Cpassed check 3a %s i %i j %i k %i\n", 0xFFFF00, str, i, j, k);
-		return (1);
-	}
-	if ((!check[k] && !check[k + 1]))
-	{
-		ft_printf("%.*Cpassed check 3b %s i %i j %i k %i\n", 0x00FFFF, str, i, j, k);
-		return (1);
-	}
-	ft_printf("%.*Cfailcheck3 %s i %i j %i k %i%C\n", 0xFF00FF, str, i, j, k);
-	return (0);
-}
+// int	ok_checknum2(int numbers[100], int check[100], char *str, int i, int j, int k)
+// {
+// 	ok_tests2b(str, check);
+// 	ft_printf("%.*CChecking %s i %i j %i k %i%C\n", 0xFFFFFF, str, i, j, k);
+// 	ft_printf("%.*CC[0] %i, C[1] %i, C[2] %i, C[3] %i, C[4] %i, C[5] %i%C\n", 0xFFFFFF, check[0], check[1], check[2], check[3], check[4], check[5]);
+// 	while (str[i] && str[i] != '?')
+// 	{
+// 		if (str[i] == '#')
+// 		{
+// 			if (numbers[j] > check[k])
+// 			{
+// 				ft_printf("%.*Cfailcheck1a %s i %i j %i k %i%C\n", 0xFF0000, str, i, j, k);
+// 				return (0);
+// 			}
+// 			while (str[i] == '#')
+// 				++i;
+// 			if (str[i] != '?')
+// 			{
+// 				if (numbers[j] != check[k])
+// 				{
+// 					ft_printf("%.*Cfailcheck1b %s i %i j %i k %i%C\n", 0xFF0000, str, i, j, k);
+// 					return (0);
+// 				}
+// 				++k;
+// 				++j;
+// 			}
+// 		}
+// 		else
+// 			++i;
+// 	}
+// 	ft_printf("passed check 1 %s i %i j %i k %i\n", str, i, j, k);
+// 	while (numbers[j])
+// 	{
+// 		if (!check[k] && !check[k + 1])
+// 		{
+// 			ft_printf("%.*Ccheck[%i] %i%C\n", 0xFF0000, k, check[k]);
+// 			ft_printf("%.*Cfailcheck2 %s i %i j %i k %i%C\n", 0xFF0000, str, i, j, k);
+// 			return (0);
+// 		}
+// 		if (check[k] > numbers[j])
+// 		{
+// 			check[k] -= (numbers[j] + 1);
+// 			++j;
+// 		}
+// 		else if (check[k] == numbers[j])
+// 		{
+// 			++j;
+// 			++k;
+// 		}
+// 		else
+// 			++k;
+// 	}
+// 	ft_printf("passed check 2 %s i %i j %i k %i\n", str, i, j, k);
+// 	if (str[i])
+// 	{
+// 		ft_printf("%.*Cpassed check 3a %s i %i j %i k %i\n", 0xFFFF00, str, i, j, k);
+// 		return (1);
+// 	}
+// 	if ((!check[k] && !check[k + 1]))
+// 	{
+// 		ft_printf("%.*Cpassed check 3b %s i %i j %i k %i\n", 0x00FFFF, str, i, j, k);
+// 		return (1);
+// 	}
+// 	ft_printf("%.*Cfailcheck3 %s i %i j %i k %i%C\n", 0xFF00FF, str, i, j, k);
+// 	return (0);
+// }
 
-int	ok_checknum2a(int numbers[100], int check[100], char *str, int i, int *j, int *k)
-{
-	ok_tests2b(str, check);
-	ft_printf("%.*CAChecking %s i %i j %i k %i%C\n", 0xFFFFFF, str, i, *j, *k);
-	ft_printf("%.*CAC[0] %i, C[1] %i, C[2] %i, C[3] %i, C[4] %i, C[5] %i%C\n", 0xFFFFFF, check[0], check[1], check[2], check[3], check[4], check[5]);
-	i = 0;
-	while (str[i] && str[i] != '?')
-	{
-		if (str[i] == '#')
-		{
-			if (numbers[*j] > check[*k])
-			{
-				ft_printf("%.*CAfailcheck1a %s i %i j %i k %i%C\n", 0xFF0000, str, i, *j, *k);
-				return (0);
-			}
-			while (str[i] == '#')
-				++i;
-			if (str[i] != '?')
-			{
-				if (numbers[*j] != check[*k])
-				{
-					ft_printf("%.*CAfailcheck1b %s i %i j %i k %i%C\n", 0xFF0000, str, i, *j, *k);
-					return (0);
-				}
-				++*k;
-				++*j;
-			}
-		}
-		else
-			++i;
-	}
-	ft_printf("Apassed check 1 %s i %i j %i k %i\n", str, i, *j, *k);
-	return (1);
-}
+// int	ok_checknum2a(int numbers[100], int check[100], char *str, int i, int *j, int *k)
+// {
+// 	ok_tests2b(str, check);
+// 	ft_printf("%.*CAChecking %s i %i j %i k %i%C\n", 0xFFFFFF, str, i, *j, *k);
+// 	ft_printf("%.*CAC[0] %i, C[1] %i, C[2] %i, C[3] %i, C[4] %i, C[5] %i%C\n", 0xFFFFFF, check[0], check[1], check[2], check[3], check[4], check[5]);
+// 	i = 0;
+// 	while (str[i] && str[i] != '?')
+// 	{
+// 		if (str[i] == '#')
+// 		{
+// 			if (numbers[*j] > check[*k])
+// 			{
+// 				ft_printf("%.*CAfailcheck1a %s i %i j %i k %i%C\n", 0xFF0000, str, i, *j, *k);
+// 				return (0);
+// 			}
+// 			while (str[i] == '#')
+// 				++i;
+// 			if (str[i] != '?')
+// 			{
+// 				if (numbers[*j] != check[*k])
+// 				{
+// 					ft_printf("%.*CAfailcheck1b %s i %i j %i k %i%C\n", 0xFF0000, str, i, *j, *k);
+// 					return (0);
+// 				}
+// 				++*k;
+// 				++*j;
+// 			}
+// 		}
+// 		else
+// 			++i;
+// 	}
+// 	ft_printf("Apassed check 1 %s i %i j %i k %i\n", str, i, *j, *k);
+// 	return (1);
+// }
 
 void	ok_strcpyspace2(char *str, char *s)
 {
@@ -393,81 +393,232 @@ void	ok_strcpyspace2(char *str, char *s)
 	//return (s);
 }
 
-int	ok_checknumbers2(char *str, int numbers[100], int check[100], int qm, long long *r, long long *q)
+int	ok_check2(char *str, int numbers[100], int j)
 {
+	char	*tmp;
 	int		i;
-	int		j;
-	int		k;
-	int		x;
-	char	s1[256];
+	int		h;
+	int		check[100];
 
-	++(*q); 
 	i = 0;
-	j = 0;
-	k = 0;
-	if (!ok_checknum2(numbers, check, str, i, j, k))
+	(void)h;
+	while (i <= j)
 	{
-		//ft_printf("%.*C%s ko%C\n", 0xFF0000, str);
-		return (0);
-	}
-	//ft_printf("%s ok\n", str);
-	ok_strcpyspace2(str, s1);
-	i = 0;
-	x = 1;
-	while (s1[i] && x)
-	{
-		if (s1[i] == '?')
-		{
-			j = 0;
-			k = 0;
-			s1[i] = '.';
-			x = ok_checknumbers2(s1, numbers, check, qm, r, q);
-			if (ok_checknum2a(numbers, check, str, i, &j, &k))
-			{
-				k = 0;
-				s1[i] = '#';
-				while ((s1[i] == '#' || s1[i] == '?') && k < numbers[j])
-				{
-					s1[i] = '#';
-					++i;
-					++k;
-				}
-				ft_printf("aaa %s\n", s1);
-				if (k == numbers[j])
-				{
-					ft_printf("aba %s\n", s1);
-					x += 2 * ok_checknumbers2(s1, numbers, check, qm, r, q);
-				}
-				else
-					return (0);
-			}
-			s1[i] = '?';
-			break ;
-		}
+		check[i] = numbers[i];
 		++i;
 	}
-	if (!x)
+	while (i < 100)
 	{
-		//ft_printf ("%.*C2r %s %i%C\n",0xFF00FF, s1, *r);
-		//free(s1);
+		check[i] = 0;
+		++i;
+	}
+	tmp = ft_strdup(str);
+	ft_printf("c2 %s %i\n", tmp, j);
+	i = ft_strlen(tmp) - 1;
+	while (i >= 0)
+	{
+		if (str[i] == '#' && j >= 0 && check[j])
+			--check[j];
+		else if (str[i] == '#')
+			--j;
+		--i;
+	}
+	free(tmp);
+	if (j < 0)
+		return (0);
+	else
+	{
+		ft_printf("ok\n");
+		return (1);
+	}
+}
+
+int	ok_check3b(char *str, int *i, int check)
+{
+	int	tmp;
+	int	j;
+
+	j = *i;
+	tmp = check;
+	while (j >= 0 && tmp > 0)
+	{
+		if (str[j] == '.')
+			return (0);
+		--j;
+		--tmp;
+	}
+	if (str[j] == '#')
+		return (0);
+	if (tmp)
+		return (0);
+	if (j)
+		*i = j - 1;
+	else
+		*i = 0;
+	return (1);
+}
+
+int	ok_check3c(char *str, int i, int check)
+{
+
+	while (i >= 0 && check >= 0)
+	{
+		if (str[i] == '.')
+			return (0);
+		--i;
+		--check;
+	}
+	if (check)
+		return (0);
+	if (i >= 0 && str[i] == '#')
+		return (0);
+	return (1);
+}
+
+int	ok_check3(char *str, int numbers[100], int j)
+{
+	char	*tmp;
+	int		i;
+	int		check[100];
+
+	i = 0;
+	while (i <= j)
+	{
+		check[i] = numbers[i];
+		++i;
+	}
+	while (i < 100)
+	{
+		check[i] = 0;
+		++i;
+	}
+	tmp = ft_strdup(str);
+	ft_printf("c3 %s %i\n", tmp, j);
+	i = ft_strlen(tmp) - 1;
+	while (i >= 0)
+	{
+		if (tmp[i] == '#' && ok_check3c(tmp, i, check[j]))
+		{
+			free(tmp);
+			return (0);
+		}
+		if (j >= 0 && ok_check3b(tmp, &i, check[j]))
+		{
+			--j;
+		}
+		else
+			--i;
+	}
+	free(tmp);
+	if (j >= 0)
+		return (0);
+	else
+	{
+		ft_printf("ok\n");
+		return (1);
+	}
+}
+
+int	ok_check(char *str, int i, int numbers[100], int j, int *k)
+{
+	char	*tmp;
+	int		num;
+
+	num = numbers[j];
+	if (str[i] == '.' || str[i + 1] == '#')
+		return (0);
+	tmp = ft_string_copy_n(str, i + 1);
+	tmp[i + 1] = 0;
+	while (i >= 0 && num)
+	{
+		if (tmp[i] != '.')
+			tmp[i] = '#';
+		else
+		{
+			free(tmp);
+			return(0);
+		}
+		--i;
+		--num;
+	}
+	//ft_printf("test\n");
+	if (num || (i >= 0 && str[i] == '#'))
+	{
+		free(tmp);
 		return (0);
 	}
-	//ft_printf ("%.*C2r %s %i%C\n",0xFFFF77, s1, *r);
-	if (!ft_strchr(s1, '?'))
-		++(*r); 
-	//ft_printf ("%.*C2r %s %i%C\n",0xFFFF00, s1, *r);
-	//free(s1);
+	if (!ok_check2(tmp, numbers, j) || !ok_check3(tmp, numbers, j))
+	{
+		free(tmp);
+		return (0);
+	}
+	//ft_printf("pass i %i \n", i);
+	if (i < 0)
+		*k = i + 1;
+	else
+		*k = i;
+	ft_printf("%s\n", tmp);
+	free (tmp);
+	// while (i >= 0)
+	// {
+	// 	if (str[i] == '#')
+	// 		return (0);
+	// 	--i;
+	// }
 	return (1);
+}
+
+long long	ok_checknumbers2(char *str, int numbers[100], long long	array[100][500])
+{
+	int			i;
+	int			j;
+	int			k;
+	long long	r;
+	int			nmax;
+	int			smax;
+
+	nmax = 0;
+	smax = 0;
+	while (str[smax])
+		++smax;
+	while (numbers[nmax])
+		++nmax;
+	i = 0;
+	j = 0;
+	r = 0;
+	while (j < nmax)
+	{
+		i = 0;
+		while (i < smax)
+		{
+			if (ok_check(str, i, numbers, j, &k))
+			{
+				//ft_printf("array[%i][%i] %i\n", j, k, array[j][k]);
+				array[j + 1][i + 1] = array[j][k] + array[j + 1][i];
+				r = array[j + 1][i + 1];
+				ft_printf("i %i j %i r %i\n", i, j, r);
+			}
+			else
+			{
+				array[j + 1][i + 1] = array[j + 1][i];
+				r = array[j + 1][i + 1];
+			}
+			++i;
+		}
+		++j;
+	}
+	ft_printf("r %i\n", r);
+	return (r);
 }
 
 void	ok_update2(char **line, long long *ptot, int i, int j)
 {
-	int		numbers[100];
-	int		check[100];
-	char	newline[500];
-	char	s[500];
-	int		qm;
-	long long	t[3];
+	int			numbers[100];
+	//int			check[100];
+	char		newline[500];
+	long long	array[100][500];
+	char		s[500];
+	int			qm;
 	//int		c;
 
 	j = 0;
@@ -475,32 +626,33 @@ void	ok_update2(char **line, long long *ptot, int i, int j)
 	while (line[j])
 	{
 		qm = 0;
-		ok_getnumbers(line[j], numbers, i, &qm);
-		t[0] = ok_checknumbers(line[j], numbers, check, qm);
+		i = 0;
+		
 		ok_getnewline(newline, line[j]);
-		ft_printf("newline: %s\n", newline);
-		qm = 0;
 		ok_getnumbers(newline, numbers, i, &qm);
-		//ft_printf("%s\n", newline);
-		//ft_printf("qm: %2i | ", qm);
-		// while (numbers[k])
-		// {
-		// 	//ft_printf("n[%i]: %2i, ", k, numbers[k]);
-		// 	++k;
-		// }
-		//ft_printf("\n");
 		ok_strcpyspace2(newline, s);
-		t[1] = 0;
-		t[2] = 0;
-		ok_checknumbers2(s, numbers, check, qm, &t[1], &t[2]);
-		ft_printf("t[0] = %lli\n", t[0]);
-		ft_printf("t[1] = %lli t[2] = %lli\n", t[1], t[2]);
+		ft_memset(array, 0, sizeof(array));
+		while (i < 500)
+		{
+			array[0][i] = 1;
+			++i;
+		}
+		ft_printf("newline: %s\n", newline);
+		ft_printf("s %s\n", s);
+		i = 0;
+		while (numbers[i])
+		{
+			ft_printf("%i ", numbers[i]);
+			++i;
+		}
+		ft_printf("\n");
+		*ptot += ok_checknumbers2(s, numbers, array);
+
 		//free(s);
 		//t[2] = t[0] * t[1] / t[0] * t[1] / t[0] * t[1] / t[0] * t[1] / t[0];
 		// if (t[1] % t[0])
 		// 	ft_printf("CC = %2i\n", ++c);
 		//ft_printf("t[2] = %lli\n", t[2]);
-		*ptot += t[1];
 		++j;
 	}
 }
