@@ -6,7 +6,7 @@
 /*   By: okraus <okraus@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: Invalid date        by okraus            #+#    #+#             */
-/*   Updated: 2023/12/17 18:25:31 by okraus           ###   ########.fr       */
+/*   Updated: 2023/12/18 13:55:43 by okraus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,38 +14,47 @@
 #include "libft.h"
 
 //1 right, 2 left, 4 up, 8 down
+#define STEP 40
+#define HEIGHT 141
+#define WIDTH 141
 
-int ok_min(int heatmap[40][141][141], int j, int i, int d)
+int ok_min(int heatmap[STEP][HEIGHT][WIDTH], int j, int i, int d)
 {
 	int	r;
 	int	k;
+	int	s;
 
 	r = heatmap[0][j][i];
 	k = 0;
-	while (k < 40)
+	s = 0;
+	while (k < STEP)
 	{
 		if (r > heatmap[k][j][i])
+		{
 			r = heatmap[k][j][i];
+			s = k;
+		}
 		++k;
 	}
 	(void)d;
+	ft_printf("|s%2i", s);
 	return (r);
 }
 
-int	ok_checkvisited(int visited[40][141][141])
+int	ok_checkvisited(int visited[STEP][HEIGHT][WIDTH])
 {
 	int	i;
 	int	j;
 	int	step;
 
 	step = 0;
-	while (step < 40)
+	while (step < STEP)
 	{
 		j = 0;
-		while (j < 141)
+		while (j < HEIGHT)
 		{
 			i = 0;
-			while(i < 141)
+			while(i < WIDTH)
 			{
 				if (!visited[step][j][i])
 				{
@@ -61,11 +70,10 @@ int	ok_checkvisited(int visited[40][141][141])
 	return (0);
 }
 
-void ok_updateneighbours_left(char **line, int heatmap[40][141][141], int visited[40][141][141], int step, int j, int i)
+void ok_updateneighbours_left(char **line, int heatmap[STEP][HEIGHT][WIDTH], int visited[STEP][HEIGHT][WIDTH], int step, int j, int i)
 {
-	if (i <= 0 || step >= 40 || step % 4 == 1)
+	if (i <= 0 || step >= STEP || step % 4 == 1)
 		return ;
-	(void)visited;
 	if (step % 4 == 3)
 	{
 		if (step < 36)
@@ -73,53 +81,60 @@ void ok_updateneighbours_left(char **line, int heatmap[40][141][141], int visite
 			if (heatmap[step + 4][j][i - 1] > heatmap[step][j][i] + line[j][i - 1] - '0')
 			{
 				heatmap[step + 4][j][i - 1] = heatmap[step][j][i] + line[j][i - 1] - '0';
+				//visited[step + 4][j][i - 1] = 0;
 			}
 		}
 	}
-	else if (step >= 16)
+	else if (step >= 12)
 	{
 		if (heatmap[3][j][i - 1] > heatmap[step][j][i] + line[j][i - 1] - '0')
 		{
 			heatmap[3][j][i - 1] = heatmap[step][j][i] + line[j][i - 1] - '0';
+			//visited[1][j][i - 1] = 0;
 		}
 	}
-	if (j >= 0 && j <= 2 && i >= 4 && i <= 6)
-		ft_printf("L%i step %i %i %i %i %i\n", step, heatmap[step][j][i], j ,i, heatmap[3][j][i - 1], heatmap[step][j][i - 1]);
+	(void)visited;
+	// if (j >= 0 && j <= 2 && i >= 4 && i <= 6)
+	// 	ft_printf("L%i step %i %i %i %i %i\n", step, heatmap[step][j][i], j ,i, heatmap[3][j][i - 1], heatmap[step][j][i - 1]);
 }
 
-void ok_updateneighbours_right(char **line, int heatmap[40][141][141], int visited[40][141][141], int step, int j, int i)
+void ok_updateneighbours_right(char **line, int heatmap[STEP][HEIGHT][WIDTH], int visited[STEP][HEIGHT][WIDTH], int step, int j, int i)
 {
-	if (i >= 140 || step >= 40 || step % 4 == 3)
+	if (i >= WIDTH - 1 || step >= STEP || step % 4 == 3)
 		return ;
-	(void)visited;
 	if (step % 4 == 1)
 	{
+		//ft_printf("11111 step %i  j=%2i   i=%2i    c%c %i\n", step, j, i, line[j][i + 1], heatmap[step][j][i]);
 		if (step < 36)
 		{
+			//ft_printf("111 step %i c%c %i\n", step, line[j][i + 1], heatmap[step][j][i]);
 			if (heatmap[step + 4][j][i + 1] > heatmap[step][j][i] + line[j][i + 1] - '0')
 			{
-				//ft_printf("1 step %i %c %i\n", step, line[j][i + 1], heatmap[step][j][i]);
+				//ft_printf("1 step %i c%c %i\n", step, line[j][i + 1], heatmap[step][j][i]);
 				heatmap[step + 4][j][i + 1] = heatmap[step][j][i] + line[j][i + 1] - '0';
+				//ft_printf("1heatmap[%i][%i][%i] =  %i\n", step + 4, j, i + 1, heatmap[step + 4][j][i + 1]);
+				//visited[step + 4][j][i + 1] = 0;
 			}
 		}
 	}
-	else if (step >= 16)
+	else if (step >= 12)
 	{
 		if (heatmap[1][j][i + 1] > heatmap[step][j][i] + line[j][i + 1] - '0')
 		{
 			//ft_printf("2 step %i %c %i\n", step, line[j][i + 1], heatmap[step][j][i]);
 			heatmap[1][j][i + 1] = heatmap[step][j][i] + line[j][i + 1] - '0';
+			//visited[1][j][i + 1] = 0;
 		}
 	}
-	if (j >= 0 && j <= 2 && i >= 4 && i <= 6)
-		ft_printf("R%i step %i %i %i %i %i\n", step, heatmap[step][j][i], j, i, heatmap[1][j][i + 1], heatmap[step][j][i + 1]);
+	(void)visited;
+	// if (j >= 0 && j <= 2 && i >= 4 && i <= 6)
+	// 	ft_printf("R%i step %i %i %i %i %i\n", step, heatmap[step][j][i], j, i, heatmap[1][j][i + 1], heatmap[step][j][i + 1]);
 }
 
-void ok_updateneighbours_down(char **line, int heatmap[40][141][141], int visited[40][141][141], int step, int j, int i)
+void ok_updateneighbours_down(char **line, int heatmap[STEP][HEIGHT][WIDTH], int visited[STEP][HEIGHT][WIDTH], int step, int j, int i)
 {
-	if (j >= 140 || step >= 40 || step % 4 == 2)
+	if (j >= HEIGHT - 1 || step >= STEP || step % 4 == 2)
 		return ;
-	(void)visited;
 	if (step % 4 == 0)
 	{
 		if (step < 36)
@@ -127,25 +142,27 @@ void ok_updateneighbours_down(char **line, int heatmap[40][141][141], int visite
 			if (heatmap[step + 4][j + 1][i] > heatmap[step][j][i] + line[j + 1][i] - '0')
 			{
 				heatmap[step + 4][j + 1][i] = heatmap[step][j][i] + line[j + 1][i] - '0';
+				//visited[step + 4][j + 1][i] = 0;
 			}
 		}
 	}
-	else if (step >= 16)
+	else if (step >= 12)
 	{
 		if (heatmap[0][j + 1][i] > heatmap[step][j][i] + line[j + 1][i] - '0')
 		{
 			heatmap[0][j + 1][i] = heatmap[step][j][i] + line[j + 1][i] - '0';
+			//visited[1][j + 1][i] = 0;
 		}
 	}
-	if (j >= 0 && j <= 2 && i >= 4 && i <= 6)
-		ft_printf("D%i step %i %i %i %i %i\n", step, heatmap[step][j][i], j, i, heatmap[0][j + 1][i], heatmap[step][j + 1][i]);
+	(void)visited;
+	// if (j >= 0 && j <= 2 && i >= 4 && i <= 6)
+	// 	ft_printf("D%i step %i %i %i %i %i\n", step, heatmap[step][j][i], j, i, heatmap[0][j + 1][i], heatmap[step][j + 1][i]);
 }
 
-void ok_updateneighbours_up(char **line, int heatmap[40][141][141], int visited[40][141][141], int step, int j, int i)
+void ok_updateneighbours_up(char **line, int heatmap[STEP][HEIGHT][WIDTH], int visited[STEP][HEIGHT][WIDTH], int step, int j, int i)
 {
-	if (j <= 0 || step >= 40 || step % 4 == 0)
+	if (j <= 0 || step >= STEP || step % 4 == 0)
 		return ;
-	(void)visited;
 	if (step % 4 == 2)
 	{
 		if (step < 36)
@@ -153,21 +170,24 @@ void ok_updateneighbours_up(char **line, int heatmap[40][141][141], int visited[
 			if (heatmap[step + 4][j - 1][i] > heatmap[step][j][i] + line[j - 1][i] - '0')
 			{
 				heatmap[step + 4][j - 1][i] = heatmap[step][j][i] + line[j - 1][i] - '0';
+				//visited[step + 4][j - 1][i] = 0;
 			}
 		}
 	}
-	else if (step >= 16)
+	else if (step >= 12)
 	{
 		if (heatmap[2][j - 1][i] > heatmap[step][j][i] + line[j - 1][i] - '0')
 		{
 			heatmap[2][j - 1][i] = heatmap[step][j][i] + line[j - 1][i] - '0';
+			//visited[1][j - 1][i] = 0;
 		}
 	}
-	if (j >= 0 && j <= 2 && i >= 4 && i <= 6)
-		ft_printf("U%i step %i %i %i %i %i\n", step, heatmap[step][j][i], j, i, heatmap[2][j - 1][i], heatmap[step][j - 1][i]);
+	(void)visited;
+	// if (j >= 0 && j <= 2 && i >= 4 && i <= 6)
+	// 	ft_printf("U%i step %i %i %i %i %i\n", step, heatmap[step][j][i], j, i, heatmap[2][j - 1][i], heatmap[step][j - 1][i]);
 }
 
-void ok_updateneighbours(char **line, int heatmap[40][141][141], int visited[40][141][141], int step, int j, int i)
+void ok_updateneighbours(char **line, int heatmap[STEP][HEIGHT][WIDTH], int visited[STEP][HEIGHT][WIDTH], int step, int j, int i)
 {
 	ok_updateneighbours_up(line, heatmap, visited, step, j, i);
 	ok_updateneighbours_left(line, heatmap, visited, step, j, i);
@@ -175,7 +195,7 @@ void ok_updateneighbours(char **line, int heatmap[40][141][141], int visited[40]
 	ok_updateneighbours_down(line, heatmap, visited, step, j, i);
 }
 
-void ok_updatelowest(char **line, int heatmap[40][141][141], int visited[40][141][141])
+void ok_updatelowest(char **line, int heatmap[STEP][HEIGHT][WIDTH], int visited[STEP][HEIGHT][WIDTH])
 {
 	int	i;
 	int	j;
@@ -187,13 +207,16 @@ void ok_updatelowest(char **line, int heatmap[40][141][141], int visited[40][141
 
 	step = 0;
 	min = 0x200000;
-	while (step < 40)
+	ms = 0;
+	mi = 0;
+	mj = 0;
+	while (step < STEP)
 	{
 		j = 0;
-		while (j < 141)
+		while (j < HEIGHT)
 		{
 			i = 0;
-			while(i < 141)
+			while(i < WIDTH)
 			{
 				if (!visited[step][j][i] && heatmap[step][j][i] < min)
 				{
@@ -212,26 +235,26 @@ void ok_updatelowest(char **line, int heatmap[40][141][141], int visited[40][141
 	//ft_printf("VISIT %i\n", heatmap[ms][mj][mi]);
 	ok_updateneighbours(line, heatmap, visited, ms, mj, mi);
 	visited[ms][mj][mi] = 1;
-	if (mi >= 4 && mi <= 6 && mj >= 0 && mj <= 2)
-		ft_printf("visited %2i %3i %3i %5i\n", ms, mj, mi, heatmap[ms][mj][mi]);
+	// if (mi >= 4 && mi <= 6 && mj >= 0 && mj <= 2)
+	//ft_printf("visited %2i %3i %3i %5i\n", ms, mj, mi, heatmap[ms][mj][mi]);
 	//ft_printf("visited %2i %3i %3i %5i\n", ms, mj, mi, heatmap[0][0][1]);
 }
 
-void	ok_fillheatmap(char **line, int heatmap[40][141][141])
+void	ok_fillheatmap(char **line, int heatmap[STEP][HEIGHT][WIDTH])
 {
 	int	i;
 	int	j;
 	int	step;
-	int	visited[40][141][141];
+	int	visited[STEP][HEIGHT][WIDTH];
 
 	step = 0;
-	while (step < 40)
+	while (step < STEP)
 	{
 		j = 0;
-		while (j < 141)
+		while (j < HEIGHT)
 		{
 			i = 0;
-			while(i < 141)
+			while(i < WIDTH)
 			{
 				visited[step][j][i] = 0;
 				++i;
@@ -249,7 +272,7 @@ void	ok_fillheatmap(char **line, int heatmap[40][141][141])
 
 void	ok_update2(char **line, long long *ptot, int i, int j)
 {
-	int			heatmap[40][141][141];
+	int			heatmap[STEP][HEIGHT][WIDTH];
 	long long	r;
 	int			steps;
 
@@ -259,15 +282,15 @@ void	ok_update2(char **line, long long *ptot, int i, int j)
 	steps = 0;
 	i = 0;
 	line[0][0] = '0';
-	while (steps < 40)
+	while (steps < STEP)
 	{
 		j = 0;
-		while (j < 141)
+		while (j < HEIGHT)
 		{
 			i = 0;
-			while(i < 141)
+			while(i < WIDTH)
 			{
-				if (i == 0 && j == 0)
+				if (steps >= 36 && i == 0 && j == 0)
 					heatmap[steps][j][i] = 0;
 				else
 					heatmap[steps][j][i] = 0x100000;
@@ -281,10 +304,10 @@ void	ok_update2(char **line, long long *ptot, int i, int j)
 	ok_fillheatmap(line, heatmap);
 	i = 0;
 	j = 0;
-	while (j < 141)
+	while (j < HEIGHT)
 	{
 		i = 0;
-		while(i < 141)
+		while(i < WIDTH)
 		{
 			ft_printf("%4i ", ok_min(heatmap, j, i, 0));
 			++i;
@@ -292,12 +315,13 @@ void	ok_update2(char **line, long long *ptot, int i, int j)
 		ft_printf("\n");
 		++j;
 	}
-	r = heatmap[0][141 - 1][141 - 1];
-	 i = 16;
-	while (i < 40)
+	r = heatmap[12][HEIGHT - 1][WIDTH - 1];
+	 i = 0;
+	while (i < STEP)
 	{
-		if (r > heatmap[i][141 - 1][141 - 1])
-			r = heatmap[i][141 - 1][141 - 1];
+		ft_printf("%2i %5i\n", i, heatmap[i][HEIGHT - 1][WIDTH - 1]);
+		if (i >= 12 && r > heatmap[i][HEIGHT - 1][WIDTH - 1])
+			r = heatmap[i][HEIGHT - 1][WIDTH- 1];
 		++i;
 	}
 	*ptot = r;
