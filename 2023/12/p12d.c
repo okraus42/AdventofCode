@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   p12b.c                                             :+:      :+:    :+:   */
+/*   p12d.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: okraus <okraus@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 09:02:42 by okraus            #+#    #+#             */
-/*   Updated: 2023/12/19 12:19:39 by okraus           ###   ########.fr       */
+/*   Updated: 2023/12/19 17:31:01 by okraus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,7 +190,7 @@ void	ok_getnewline(char *newline, char *line)
 	i = 0;
 	j = 0;
 	iter = 0;
-	iters = 1;
+	iters = 5;
 	while (iter < iters)
 	{
 		i = 0;
@@ -389,7 +389,9 @@ void	ok_strcpyspace2(char *str, char *s)
 		s[i] = str[i];
 		++i;
 	}
-	s[i] = 0;
+	s[i] = '.';
+	s[i + 1] = 0;
+	s[i + 2] = 0;
 	//return (s);
 }
 
@@ -519,12 +521,21 @@ void	ok_strcpyspace2(char *str, char *s)
 // 	}
 // }
 
-int	ok_check(char *str, int i, int numbers[100], int j)
+int	ok_check(char *str, int min, int i, int numbers[100], int j)
 {
 	int	h;
 
+	//ft_printf("min = %i\n", min);
 	if (!str[i])
 		return (0);
+	if (i && str[i - 1] == '#')
+		return (0);
+	// while  (min < i)
+	// {
+	// 	if (str[min] == '#')
+	// 		return (0);
+	// 	++min;
+	// }
 	if (str[i] == '.')
 		return (0);
 	h = numbers[j];
@@ -539,49 +550,9 @@ int	ok_check(char *str, int i, int numbers[100], int j)
 		return (1);
 	}
 	//ft_printf("fail\n");
+	(void)min;
 	return (0);
-	// num = numbers[j];
-	// if (str[i] == '.' || str[i + 1] == '#')
-	// 	return (0);
-	// tmp = ft_string_copy_n(str, i + 1);
-	// tmp[i + 1] = 0;
-	// while (i >= 0 && num)
-	// {
-	// 	if (tmp[i] != '.')
-	// 		tmp[i] = '#';
-	// 	else
-	// 	{
-	// 		free(tmp);
-	// 		return(0);
-	// 	}
-	// 	--i;
-	// 	--num;
-	// }
-	// //ft_printf("test\n");
-	// if (num || (i >= 0 && str[i] == '#'))
-	// {
-	// 	free(tmp);
-	// 	return (0);
-	// }
-	// if (!ok_check2(tmp, numbers, j) || !ok_check3(tmp, numbers, j))
-	// {
-	// 	free(tmp);
-	// 	return (0);
-	// }
-	// //ft_printf("pass i %i \n", i);
-	// if (i < 0)
-	// 	*k = i + 1;
-	// else
-	// 	*k = i;
-	// ft_printf("%s\n", tmp);
-	// free (tmp);
-	// // while (i >= 0)
-	// // {
-	// // 	if (str[i] == '#')
-	// // 		return (0);
-	// // 	--i;
-	// // }
-	// return (1);
+
 }
 
 int	ok_checkmin(char *str, int j, int i, int numbers[100])
@@ -593,7 +564,7 @@ int	ok_checkmin(char *str, int j, int i, int numbers[100])
 	ii = i;
 	jj = j + 1;
 	h = 0;
-	ft_printf("CMIN %i %i\n", j, i);
+	//ft_printf("CMIN %i %i\n", j, i);
 	while (str[ii])
 	{
 		if (str[ii] == '#')
@@ -610,182 +581,17 @@ int	ok_checkmin(char *str, int j, int i, int numbers[100])
 	return (1);
 }
 
-void	ok_setminmax(int minmax[100][2], int j, char *str, int numbers[100])
+void	ok_setmin(int min[100], int j, char *str, int numbers[100])
 {
-	int	i;
-	int	ii;
-	int	hash;
-
-	i = 0;
-	minmax[j][0] = ft_strlen(str);
 	if (!j)
 	{
-		while (str[i])
-		{
-			ii = i;
-			hash = numbers[j];
-			while (hash && str[ii] && str[ii] != '.')
-			{
-				++ii;
-				--hash;
-			}
-			if (!hash && str[ii] != '#' && ok_checkmin(str, j, i, numbers))
-			{
-				minmax[j][0] = ii - numbers[j];
-				ft_printf("min %i = %i\n", j, ii - numbers[j]);
-				break;
-			}
-			++i;
-		}
-		while (str[i] && str[i] != '#')
-		{
-			++i;
-		}
-		hash = numbers[j];
-		ii = i;
-		while (hash && str[ii] && str[ii] != '.')
-		{
-			++ii;
-			--hash;
-		}
-		if (!hash && str[ii] != '#')
-		{
-			minmax[j][1] = ii - numbers[j];
-			ft_printf("max %i = %i\n", j, ii);
-			return ;
-		}
-		else if (hash)
-		{
-			while (str[i] == '#' || str[i] == '?')
-				++i;
-			//ft_printf("hash 00 %i\n", i);
-			while (i >= 0)
-			{
-				ii = i;
-				hash = numbers[j];
-				while (ii >= 0 && str[ii] != '.')
-				{
-					--hash;
-					if ((!hash && !ii) || (!hash && str[ii] != '#'))
-					{
-						minmax[j][1] = ii;
-						ft_printf("max %i = %i\n", j, ii);
-						return ;
-					}
-					--ii;
-				}
-				--i;
-			}
-		}
-		else //!hash
-		{
-			while (str[i] == '#')
-				++i;
-			//ft_printf("no hash 0\n");
-			while (i >= 0)
-			{
-				ii = i;
-				hash = numbers[j];
-				while (ii >= 0 && str[ii] != '.' && str[i + 1] != '#')
-				{
-					--hash;
-					if ((!hash && !ii) || (!hash && str[ii] != '#'))
-					{
-						minmax[j][1] = ii;
-						ft_printf("max %i = %i\n", j, ii);
-						return ;
-					}
-					--ii;
-				}
-				--i;
-			}
-		}
+		min[j] = 0;
 	}
-	else		//BETTER START CHECKING for remaining numbers
+	else
 	{
-		i = minmax[j - 1][0] + 1 + numbers[j - 1];
-		while (str[i - 2] && str[i - 1] && str[i])
-		{
-			ii = i;
-			hash = numbers[j];
-			while (hash && str[ii] && str[ii] != '.')
-			{
-				++ii;
-				--hash;
-			}
-			if (!hash && str[ii] != '#' && ok_checkmin(str, j, i, numbers))
-			{
-				ft_printf("START %s | %s | %i\n", &str[ii], &str[ii - numbers[j]], numbers[j]);
-				minmax[j][0] = ii - numbers[j];
-				break;
-			}
-			++i;
-		}
-		while (str[i] && str[i] != '#')
-		{
-			++i;
-		}
-		hash = numbers[j];
-		ii = i;
-		while (hash && str[ii] && str[ii] != '.')
-		{
-			++ii;
-			--hash;
-		}
-		if (!hash && str[ii] != '#')
-		{
-			ft_printf("first return %i\n", i);
-			minmax[j][1] = ii - numbers[j];
-			return ;
-		}
-		else if (hash)
-		{
-			while (str[i] == '#' || str[i] == '?')
-				++i;
-			ft_printf("hash %i\n", i);
-			while (i >= 0)
-			{
-				ii = i;
-				hash = numbers[j];
-				while (ii >= 0 && str[ii] != '.')
-				{
-					--hash;
-					if ((!hash && !ii) || (!hash && str[ii] != '#'))
-					{
-						minmax[j][1] = ii;
-						return ;
-					}
-					--ii;
-				}
-				--i;
-			}
-		}
-		else //!hash
-		{
-			while (str[i] == '#')
-				++i;
-			while (i >= 0)
-			{
-				ii = i;
-				ft_printf("BW | %s %i\n", &str[ii], ii);
-				hash = numbers[j];
-				while (ii >= 0 && str[ii] != '.' && str[i + 1] != '#')
-				{
-					ft_printf("%s %i\n", &str[ii], ii);
-					--hash;
-					if ((!hash && !ii) || (!hash && str[ii] != '#'))
-					{
-						ft_printf("no hash %i\n", ii);
-						minmax[j][1] = ii;
-						return ;
-					}
-					--ii;
-				}
-				--i;
-			}
-		}
-		//ft_printf("no return\n");
+		min[j] = min[j - 1] + numbers[j - 1] + 1;
 	}
+	(void)str;
 }
 
 void	ok_findk(int i, int j, int *k, int numbers[100])
@@ -800,19 +606,28 @@ long long	ok_checknumbers2(char *str, int numbers[100], long long	array[100][500
 {
 	int			i;
 	int			j;
-	int			k;
 	long long	r;
 	int			nmax;
 	int			smax;
-	int			minmax[100][2];
+	int			min[100];
+	int			wiggle;
 
 	nmax = 0;
 	smax = 0;
 	i = 0;
+	j = 0;
+	wiggle = ft_strlen(str);
+	while (numbers[j])
+	{
+		wiggle -= numbers[j];
+		++j;
+	}
+	wiggle -= j;
+	++wiggle;
+	//ft_printf("Wiggle %i\n", wiggle);
 	while (i < 100)
 	{
-		minmax[i][0] = 0;
-		minmax[i][1] = 0;
+		min[i] = 0;
 		++i;
 	}
 	while (str[smax])
@@ -825,24 +640,31 @@ long long	ok_checknumbers2(char *str, int numbers[100], long long	array[100][500
 	while (j < nmax)
 	{
 		i = 0;
-		ok_setminmax(minmax, j, str, numbers);
-		i = minmax[j][0];
-		ft_printf("iii %i %i %i\n", i, minmax[j][0], minmax[j][1]);
+		ok_setmin(min, j, str, numbers);
+		i = min[j];
+		//ft_printf("iii %i %i \n", i, min[j]);
 		while (i < smax)
 		{
-			if (ok_check(str, i, numbers, j) && i <= minmax[j][1])
+			if (ok_check(str, min[j], i, numbers, j) && i < min[j] + wiggle)
 			{
-				ok_findk(i, j, &k, numbers);
-				ft_printf("k %i arr[%i] %i n %i\n", k, array[j][k], j, numbers[j]);
-				array[j + 1][i + 1] = array[j][k] + array[j + 1][i];
-				r = array[j + 1][i + 1];
+				//ok_findk(i, j, &k, numbers);
+				//ft_printf("k %i arr[%i] %i n %i\n", k, array[j][k], j, numbers[j]);
+				//ft_printf("success j %i, i %i\n", j, i);
+				if (j)
+					array[j + 1][i + 1 + numbers[j]] = array[j][i] + array[j + 1][i + numbers[j]];
+				else
+					array[j + 1][i + 1 + numbers[j]] = array[j][i] + array[j + 1][i + numbers[j]];
+				//ft_printf("success array[%i][%i] = %i\n", j + 1, i + 1 + numbers[j], array[j + 1][i + 1 + numbers[j]]);
+				r = array[j + 1][i + 1 + numbers[j]];
 			}
-			else
+			else if (i < min[j] + wiggle)
 			{
-				array[j + 1][i + 1] = array[j + 1][i];
-				r = array[j + 1][i + 1];
+				//ft_printf("fail j %i, i %i\n", j, i);
+				array[j + 1][i + 1 + numbers[j]] = array[j + 1][i + numbers[j]];
+				//ft_printf("fail array[%i][%i] = %i\n", j + 1, i + 1 + numbers[j], array[j + 1][i + 1 + numbers[j]]);
+				r = array[j + 1][i + 1 + numbers[j]];
 			}
-			ft_printf("i %i j %i r %i\n", i, j, r);
+			//ft_printf("i %i j %i r %i\n", i, j, r);
 			++i;
 		}
 		++j;
@@ -888,10 +710,27 @@ void	ok_update2(char **line, long long *ptot, int i, int j)
 		//ft_printf("\n");
 		*ptot += ok_checknumbers2(s, numbers, array);
 		c = 0;
-		while (c < 10)
+		i = 2;
+		i = 2;
+		ft_printf("%3c |", '-');
+		i = 2;
+		ft_printf("%5c |", '-');
+		while (i < 15)
+		{
+			if (i > 1)
+				ft_printf("%5c |", s[i - 2]);
+			++i;
+		}
+		ft_printf("\n");
+		c = 0;
+		while (c < 8)
 		{
 			i = 0;
-			while (i < 20)
+			if (c)
+				ft_printf("%3i |", numbers[c - 1] % 100);
+			else
+				ft_printf("%3i |", 0);
+			while (i < 15)
 			{
 				ft_printf("%5i |", array[c][i]);
 				++i;
@@ -919,7 +758,7 @@ int	main(void)
 	total[1] = 0;
 	line = NULL;
 	i = 1;
-	line = ft_readfile("test2", 65536);
+	line = ft_readfile("inputtest", 65536);
 	//ft_printf("%p\n", (void *)line);
 	//ft_printf("j = %i\n", j);
 	i = 0;

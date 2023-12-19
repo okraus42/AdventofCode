@@ -6,7 +6,7 @@
 /*   By: okraus <okraus@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 09:02:42 by okraus            #+#    #+#             */
-/*   Updated: 2023/12/19 10:18:11 by okraus           ###   ########.fr       */
+/*   Updated: 2023/12/19 10:27:52 by okraus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,7 +215,7 @@ void	ok_update(char **line, long long *ptot, int i, int j)
 	*ptot = r;
 }
 
-void	ok_copypart(t_part2 part[50000], int i, int *max)
+void	ok_copypart(t_part2 part[5000], int i, int *max)
 {
 	part[*max].xmin = part[i].xmin;
 	part[*max].xmax = part[i].xmax;
@@ -229,7 +229,7 @@ void	ok_copypart(t_part2 part[50000], int i, int *max)
 	part[*max].res = part[i].res;
 	part[*max].rules = part[i].rules;
 }
-void	ok_processrule2(t_ins ins[1000], t_part2 part[50000], int i, int *max)
+void	ok_processrule2(t_ins ins[1000], t_part2 part[5000], int i, int *max)
 {
 	char	**rules;
 	int		r;
@@ -437,7 +437,7 @@ void	ok_processrule2(t_ins ins[1000], t_part2 part[50000], int i, int *max)
 	
 }
 
-void	ok_processpart2(t_part2 part[50000], int i, t_ins ins[1000], int *max)
+void	ok_processpart2(t_part2 part[5000], int i, t_ins ins[1000], int *max)
 {
 	ft_printf("yyy\n");
 	ok_processrule2(ins, part, i, max);
@@ -446,7 +446,7 @@ void	ok_processpart2(t_part2 part[50000], int i, t_ins ins[1000], int *max)
 void	ok_update2(char **line, long long *ptot, int i, int j)
 {
 	t_ins		ins[1000];
-	t_part2		part[50000];
+	t_part2		part[5000];
 	long long	r;
 	int			mins;
 	int			mpart;
