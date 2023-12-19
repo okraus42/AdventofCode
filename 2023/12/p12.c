@@ -6,7 +6,7 @@
 /*   By: okraus <okraus@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 09:02:42 by okraus            #+#    #+#             */
-/*   Updated: 2023/12/15 18:01:45 by okraus           ###   ########.fr       */
+/*   Updated: 2023/12/18 15:39:06 by okraus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -518,13 +518,10 @@ void	ok_update2(char **line, long long *ptot, int i, int j)
 		t[1] = 0;
 		t[2] = 0;
 		ok_checknumbers2(s, numbers, check, qm, &t[1], &t[2]);
-		ft_printf("t[0] = %lli\n", t[0]);
-		ft_printf("t[1] = %lli t[2] = %lli\n", t[1], t[2]);
+		// ft_printf("t[0] = %lli\n", t[0]);
+		// ft_printf("t[1] = %lli t[2] = %lli\n", t[1], t[2]);
 		//free(s);
-		//t[2] = t[0] * t[1] / t[0] * t[1] / t[0] * t[1] / t[0] * t[1] / t[0];
-		// if (t[1] % t[0])
-		// 	ft_printf("CC = %2i\n", ++c);
-		//ft_printf("t[2] = %lli\n", t[2]);
+		ft_printf("t[2] = %lli\n", t[2]);
 		*ptot += t[1];
 		++j;
 	}
