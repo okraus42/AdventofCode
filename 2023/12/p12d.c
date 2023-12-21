@@ -6,12 +6,14 @@
 /*   By: okraus <okraus@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 09:02:42 by okraus            #+#    #+#             */
-/*   Updated: 2023/12/19 17:31:01 by okraus           ###   ########.fr       */
+/*   Updated: 2023/12/20 15:25:32 by okraus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "libft.h"
+
+#define ITERS 1
 
 void	ok_getnumbers(char *str, int numbers[100], int i, int *qm)
 {
@@ -190,7 +192,7 @@ void	ok_getnewline(char *newline, char *line)
 	i = 0;
 	j = 0;
 	iter = 0;
-	iters = 5;
+	iters = ITERS;
 	while (iter < iters)
 	{
 		i = 0;
@@ -229,6 +231,7 @@ void	ok_getnewline(char *newline, char *line)
 		}
 	}
 	newline[j] = 0;
+	newline[j + 1] = 0;
 }
 
 // void	ok_tests2b(char *str, int check[100])
@@ -525,11 +528,17 @@ int	ok_check(char *str, int min, int i, int numbers[100], int j)
 {
 	int	h;
 
-	//ft_printf("min = %i\n", min);
+	//ft_printf("min = %i, i = %i\n", min, i);
 	if (!str[i])
+	{
+		//ft_printf("fail1\n");
 		return (0);
+	}
 	if (i && str[i - 1] == '#')
+	{
+		//ft_printf("fail2\n");
 		return (0);
+	}
 	// while  (min < i)
 	// {
 	// 	if (str[min] == '#')
@@ -549,7 +558,7 @@ int	ok_check(char *str, int min, int i, int numbers[100], int j)
 		//ft_printf("pass\n");
 		return (1);
 	}
-	//ft_printf("fail\n");
+	//ft_printf("fail3\n");
 	(void)min;
 	return (0);
 
@@ -594,14 +603,6 @@ void	ok_setmin(int min[100], int j, char *str, int numbers[100])
 	(void)str;
 }
 
-void	ok_findk(int i, int j, int *k, int numbers[100])
-{
-	if (!j)
-		*k = 1;
-	else
-		*k = i - numbers[j - 1];
-}
-
 long long	ok_checknumbers2(char *str, int numbers[100], long long	array[100][500])
 {
 	int			i;
@@ -611,6 +612,8 @@ long long	ok_checknumbers2(char *str, int numbers[100], long long	array[100][500
 	int			smax;
 	int			min[100];
 	int			wiggle;
+	int			fail;
+	int			pass;
 
 	nmax = 0;
 	smax = 0;
@@ -643,13 +646,16 @@ long long	ok_checknumbers2(char *str, int numbers[100], long long	array[100][500
 		ok_setmin(min, j, str, numbers);
 		i = min[j];
 		//ft_printf("iii %i %i \n", i, min[j]);
+		fail = 0;
+		pass = 0;
 		while (i < smax)
 		{
-			if (ok_check(str, min[j], i, numbers, j) && i < min[j] + wiggle)
+			if (!fail && ok_check(str, min[j], i, numbers, j) && i < min[j] + wiggle)
 			{
 				//ok_findk(i, j, &k, numbers);
 				//ft_printf("k %i arr[%i] %i n %i\n", k, array[j][k], j, numbers[j]);
 				//ft_printf("success j %i, i %i\n", j, i);
+				pass = 1;
 				if (j)
 					array[j + 1][i + 1 + numbers[j]] = array[j][i] + array[j + 1][i + numbers[j]];
 				else
@@ -664,6 +670,8 @@ long long	ok_checknumbers2(char *str, int numbers[100], long long	array[100][500
 				//ft_printf("fail array[%i][%i] = %i\n", j + 1, i + 1 + numbers[j], array[j + 1][i + 1 + numbers[j]]);
 				r = array[j + 1][i + 1 + numbers[j]];
 			}
+			if (pass && str[i] == '#')
+				fail = 1;
 			//ft_printf("i %i j %i r %i\n", i, j, r);
 			++i;
 		}
@@ -700,7 +708,7 @@ void	ok_update2(char **line, long long *ptot, int i, int j)
 			++i;
 		}
 		ft_printf("newline: %s\n", newline);
-		//ft_printf("s %s\n", s);
+		ft_printf("s %s\n", s);
 		i = 0;
 		while (numbers[i])
 		{
@@ -712,13 +720,13 @@ void	ok_update2(char **line, long long *ptot, int i, int j)
 		c = 0;
 		i = 2;
 		i = 2;
-		ft_printf("%3c |", '-');
+		ft_printf("%3c|", '-');
 		i = 2;
-		ft_printf("%5c |", '-');
-		while (i < 15)
+		ft_printf("%5c|", '-');
+		while (i < 25)
 		{
 			if (i > 1)
-				ft_printf("%5c |", s[i - 2]);
+				ft_printf("%5c|", s[i - 2]);
 			++i;
 		}
 		ft_printf("\n");
@@ -727,12 +735,12 @@ void	ok_update2(char **line, long long *ptot, int i, int j)
 		{
 			i = 0;
 			if (c)
-				ft_printf("%3i |", numbers[c - 1] % 100);
+				ft_printf("%3i|", numbers[c - 1] % 100);
 			else
-				ft_printf("%3i |", 0);
-			while (i < 15)
+				ft_printf("%3i|", 0);
+			while (i < 25)
 			{
-				ft_printf("%5i |", array[c][i]);
+				ft_printf("%5i|", array[c][i]);
 				++i;
 			}
 			ft_printf("\n");
@@ -758,12 +766,12 @@ int	main(void)
 	total[1] = 0;
 	line = NULL;
 	i = 1;
-	line = ft_readfile("inputtest", 65536);
+	line = ft_readfile("test2", 65536);
 	//ft_printf("%p\n", (void *)line);
 	//ft_printf("j = %i\n", j);
 	i = 0;
 	j = 0;
-	ok_update(line, &total[0], i, j);
+	//ok_update(line, &total[0], i, j);
 	ft_printf("t1=%5lld\n", total[0]);
 	ok_update2(line, &total[1], i, j);
 	ft_printf("t2=%5lld\n", total[1]);
