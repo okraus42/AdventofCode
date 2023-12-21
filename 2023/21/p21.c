@@ -6,17 +6,32 @@
 /*   By: okraus <okraus@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 09:02:42 by okraus            #+#    #+#             */
-/*   Updated: 2023/12/21 07:44:45 by okraus           ###   ########.fr       */
+/*   Updated: 2023/12/21 18:57:38 by okraus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "libft.h"
 
-#define WIDTH 11 //131
-#define HEIGHT 11
+#define WIDTH 131 //131
+#define HEIGHT 131
 
-#define INPUT "inputtest"
+#define ODD 0
+#define EVEN 13
+#define WW 1
+#define EE 2
+#define NN 3
+#define SS 4
+#define NW 5
+#define NE 6
+#define SW 7
+#define SE 8
+#define NW2 9
+#define NE2 10
+#define SW2 11
+#define SE2 12
+
+#define INPUT "input"
 
 typedef struct s_ff
 {
@@ -191,7 +206,7 @@ void	ok_update(char **line, long long *ptot, int i, int j)
 	*ptot = r;
 }
 
-void	ok_resetmap2(int src[HEIGHT][WIDTH], int tgt[HEIGHT][WIDTH])
+void	ok_resetmap2(int src[14][HEIGHT][WIDTH], int tgt[14][HEIGHT][WIDTH], int type)
 {
 	int	j;
 	int	i;
@@ -202,17 +217,17 @@ void	ok_resetmap2(int src[HEIGHT][WIDTH], int tgt[HEIGHT][WIDTH])
 		 i = 0;
 		while (i < WIDTH)
 		{
-			if (src[j][i] > 0)
-				tgt[j][i] = 0;
+			if (src[type][j][i] > 0)
+				tgt[type][j][i] = 0;
 			else
-				tgt[j][i] = src[j][i];
+				tgt[type][j][i] = src[type][j][i];
 			++i;
 		}
 		++j;
 	}
 }
 
-void	ok_copymap2(int src[HEIGHT][WIDTH], int tgt[HEIGHT][WIDTH])
+void	ok_copymap2(int src[14][HEIGHT][WIDTH], int tgt[14][HEIGHT][WIDTH], int type)
 {
 	int	j;
 	int	i;
@@ -223,14 +238,14 @@ void	ok_copymap2(int src[HEIGHT][WIDTH], int tgt[HEIGHT][WIDTH])
 		 i = 0;
 		while (i < WIDTH)
 		{
-			tgt[j][i] = src[j][i];
+			tgt[type][j][i] = src[type][j][i];
 			++i;
 		}
 		++j;
 	}
 }
 
-void	ok_fillmap2(int src[HEIGHT][WIDTH], int tgt[HEIGHT][WIDTH])
+void	ok_fillmap2(int src[14][HEIGHT][WIDTH], int tgt[14][HEIGHT][WIDTH], int type)
 {
 	int	j;
 	int	i;
@@ -242,10 +257,17 @@ void	ok_fillmap2(int src[HEIGHT][WIDTH], int tgt[HEIGHT][WIDTH])
 		i = 0;
 		while (i < WIDTH)
 		{
-			if (src[j][i] >= 0 )
+			if (src[type][j][i] > 0)
 			{
-				if (i > 0 && j > 0 && i < WIDTH - 1 && j < HEIGHT - 1)
-					tgt[j][i] = 
+				tgt[type][j][i] = 0;
+				if (i && src[type][j][i - 1] == 0)
+					tgt[type][j][i - 1] = 1;
+				if (j && src[type][j- 1][i] == 0)
+					tgt[type][j- 1][i] = 1;
+				if (i < WIDTH - 1 && src[type][j][i + 1] == 0)
+					tgt[type][j][i + 1] = 1;
+				if (j < HEIGHT - 1 && src[type][j+ 1][i] == 0)
+					tgt[type][j+ 1][i] = 1;
 			}
 			++i;
 		}
@@ -253,7 +275,7 @@ void	ok_fillmap2(int src[HEIGHT][WIDTH], int tgt[HEIGHT][WIDTH])
 	}
 }
 
-void	ok_printmap2(int src[HEIGHT][WIDTH])
+void	ok_printmap2(int src[14][HEIGHT][WIDTH], int type)
 {
 	int	j;
 	int	i;
@@ -264,7 +286,7 @@ void	ok_printmap2(int src[HEIGHT][WIDTH])
 		 i = 0;
 		while (i < WIDTH)
 		{
-			ft_printf("%2i", src[j][i]);
+			ft_printf("%2i", src[type][j][i]);
 			++i;
 		}
 		ft_printf("\n");
@@ -272,68 +294,113 @@ void	ok_printmap2(int src[HEIGHT][WIDTH])
 	}
 }
 
-void	ok_process2 (int map1[HEIGHT][WIDTH], int map2[HEIGHT][WIDTH], int steps)
+long long ok_evalmap2(int map1[14][HEIGHT][WIDTH], int map2[14][HEIGHT][WIDTH], int type, int steps)
 {
-	int	step;
+	int			step;
+	long long	r;
+	int			i;
+	int			j;
 
 	step = 0;
+	r = 0;
 	while (step < steps)
 	{
 		ft_printf("processing %i\n", step);
-		ok_printmap2(map1);
-		ok_resetmap2(map1, map2);
-		ok_fillmap2(map1, map2);
-		ok_copymap2(map2, map1);
+		//ok_printmap2(map1, type);
+		ok_resetmap2(map1, map2, type);
+		ok_fillmap2(map1, map2, type);
+		ok_copymap2(map2, map1, type);
 		++step;
 	}
-}
-
-void	ok_update2(char **line, long long *ptot, int i, int j)
-{
-	long long	r;
-	int			map1[HEIGHT][WIDTH];
-	int			map2[HEIGHT][WIDTH];
-
-	j = 0;
-	while (line[j])
-	{
-		i = 0;
-		while (line[j][i])
-		{
-			map1[j][i] = 0;
-			if (line[j][i] == 'O')
-			{
-				map1[j][i] = 1;
-			}
-			else
-				map1[j][i] = 0;
-			map2[j][i] = 0;
-			if (line[j][i] == '#')
-			{
-				map1[j][i] = -1;
-				map2[j][i] = -1;
-			}
-			++i;
-		}
-		++j;
-	}
-	ok_process2(map1, map2, 50);
-	r = 0;
-	//ft_put_split(line);
-	//ok_printmap(map1);
 	j = 0;
 	while (j < HEIGHT)
 	{
 		i = 0;
 		while (i < WIDTH)
 		{
-			if (map2[j][i] > 0)
-				r += (long long)map2[j][i];
+			if (map2[type][j][i] > 0)
+				++r;
 			++i;
 		}
 		++j;
 	}
-	*ptot = r;
+	return (r);
+}
+
+void	ok_process2(int map1[14][HEIGHT][WIDTH], int map2[14][HEIGHT][WIDTH], long long r[14])
+{
+	map1[ODD][65][65] = 1;
+	r[ODD] = ok_evalmap2(map1, map2, ODD, 261);
+	map1[EVEN][65][65] = 1;
+	r[EVEN] = ok_evalmap2(map1, map2, EVEN, 260);
+	map1[NN][HEIGHT - 1][65] = 1;
+	r[NN] = ok_evalmap2(map1, map2, NN, 130);
+	map1[SS][0][65] = 1;
+	r[SS] = ok_evalmap2(map1, map2, SS, 130);
+	map1[WW][65][WIDTH - 1] = 1;
+	r[WW] = ok_evalmap2(map1, map2, WW, 130);
+	map1[EE][65][0] = 1;
+	r[EE] = ok_evalmap2(map1, map2, EE, 130);
+	map1[NE][HEIGHT - 1][0] = 1;
+	r[NE] = ok_evalmap2(map1, map2, NE, 64);
+	map1[NW][HEIGHT - 1][WIDTH - 1] = 1;
+	r[NW] = ok_evalmap2(map1, map2, NW, 64);
+	map1[SE][0][0] = 1;
+	r[SE] = ok_evalmap2(map1, map2, SE, 64);
+	map1[SW][0][WIDTH - 1] = 1;
+	r[SW] = ok_evalmap2(map1, map2, SW, 64);
+	map1[NE2][HEIGHT - 1][0] = 1;
+	r[NE2] = ok_evalmap2(map1, map2, NE2, 131 + 64);
+	map1[NW2][HEIGHT - 1][WIDTH - 1] = 1;
+	r[NW2] = ok_evalmap2(map1, map2, NW2, 131 + 64);
+	map1[SE2][0][0] = 1;
+	r[SE2] = ok_evalmap2(map1, map2, SE2, 131 + 64);
+	map1[SW2][0][WIDTH - 1] = 1;
+	r[SW2] = ok_evalmap2(map1, map2, SW2, 131 + 64);
+}
+
+void	ok_update2(char **line, long long *ptot, int i, int j)
+{
+	int			map1[14][HEIGHT][WIDTH];
+	int			map2[14][HEIGHT][WIDTH];
+	int			m;
+	long long	r[14];
+	m = 0;
+	while (m < 14)
+	{
+		j = 0;
+		while (line[j])
+		{
+			i = 0;
+			while (line[j][i])
+			{
+				map1[m][j][i] = 0;
+				map2[m][j][i] = 0;
+				if (line[j][i] == '#')
+				{
+					map1[m][j][i] = -1;
+					map2[m][j][i] = -1;
+				}
+				++i;
+			}
+			++j;
+		}
+		++m;
+	}
+	ok_process2(map1, map2, r);
+	m = 0;
+	while (m < 14)
+	{
+		ft_printf("r[%i] = %lli\n", m, r[m]);
+		++m;
+	}
+	//ft_put_split(line);
+	//ok_printmap(map1);
+	*ptot = r[ODD] * (202299LL * 202299LL)
+			+r[EVEN] * (202300LL * 202300LL)
+			+ r[NN] + r[WW] + r[SS] + r[EE]
+			+ 202300LL * (r[NE] + r[NW] + r[SE] + r[SW])
+			+ 202299LL * (r[NE2] + r[NW2] + r[SE2] + r[SW2]);
 }
 
 int	main(void)
@@ -361,5 +428,3 @@ int	main(void)
 	ft_free_split(&line);
 	return (0);
 }
-//797259120 low
-//816870672 too low

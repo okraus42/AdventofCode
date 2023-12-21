@@ -6,7 +6,7 @@
 /*   By: okraus <okraus@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 09:02:42 by okraus            #+#    #+#             */
-/*   Updated: 2023/12/21 10:30:35 by okraus           ###   ########.fr       */
+/*   Updated: 2023/12/21 10:54:38 by okraus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ void	ok_createff(t_ff *ff, char *str)
 	int	i;
 
 	i = 1;
-	while (str[i] != ' ')
+	while (str[i] != ' ' && str[i] != ',')
 	{
 		ff->name[i - 1] = str[i];
 		++i;
@@ -85,7 +85,7 @@ void	ok_createcon(t_con *con, char *str)
 	int	i;
 
 	i = 1;
-	while (str[i] != ' ')
+	while (str[i] != ' ' && str[i] != ',')
 	{
 		con->name[i - 1] = str[i];
 		++i;
@@ -286,7 +286,7 @@ void	ok_executesig(t_signal *sig, t_ff ff[50], t_con con[50], int *iter)
 		}
 		++i;
 	}
-	ft_printf("%^*CFailed to execute signal from %s to %s%C\n", 0x880000, sig->from, sig->to);
+	//ft_printf("%^*CFailed to execute signal from %s to %s%C\n", 0x880000, sig->from, sig->to);
 }
 
 void	ok_ffsig(t_list **head, t_ff *ff)
@@ -323,7 +323,7 @@ void	ok_consig(t_list **head, t_con *con)
 	{
 		if (con->received[i] == LOW)
 			sig = HIGH;
-		ft_printf("con %s, source %s, val %i sig %i\n", con->name, con->source[i], con->received[i], sig);
+		//ft_printf("con %s, source %s, val %i sig %i\n", con->name, con->source[i], con->received[i], sig);
 		++i;
 	}
 	i = 0;
@@ -497,6 +497,148 @@ void	ok_update(char **line, long long *ptot, int i, int j)
 	*ptot = r;
 }
 
+void	ok_processsig2(t_list **oldhead, t_ff ff[50], t_con con[50], int *iter, long long *high, long long *low, long long run[5])
+{
+	t_list		*newhead;
+	t_list		*tmp;
+	t_signal	*signal;
+
+	tmp = *oldhead;
+	while (tmp)
+	{
+		signal = tmp->content;
+		if (signal->signal == HIGH)
+			++(*high);
+		else if (signal->signal == LOW)
+			++(*low);
+		if (signal->signal == HIGH && !ft_strncmp(signal->from, "dd", 3))
+		{
+			ft_printf("from %s --high--> %s\n", signal->from, signal->to);
+			run[1] = run[0];
+		}
+		else if (signal->signal == HIGH && !ft_strncmp(signal->from, "tx", 3))
+			run[2] = run[0];
+		else if (signal->signal == HIGH && !ft_strncmp(signal->from, "ph", 3))
+			run[3] = run[0];
+		else if (signal->signal == HIGH && !ft_strncmp(signal->from, "nz", 3))
+			run[4] = run[0];
+		ok_executesig(signal, ff, con, iter);
+		tmp = tmp->next;
+	}
+	ft_lstclear(oldhead, free);
+	newhead = NULL;
+	ok_createlist(&newhead, ff, con, iter);
+	++(*iter);
+	//ft_printf("%^*Clow %5lli     high %5lli %C\n", 0x007777, *low, *high);
+	//ft_printf("%^*C    ITER     %-14i   %C\n", 0x007777, *iter);
+	*oldhead = newhead;
+}
+
+long long ok_runsignals2(t_broadcast *broad, t_ff ff[50], t_con con[50])
+{
+	long long	low;
+	long long	high;
+	int			signals;
+	int			j;
+	int			iter;
+	long long	run[5];
+	t_list		*sig;
+
+	signals = 0;
+	high = 0;
+	low = 0;
+	iter = 1;
+	while (signals < 5000)
+	{
+		ft_printf("%^*C    RUN %-14i                %C\n", 0x770077, signals);
+		sig = NULL;
+		low += 1;
+		++iter;
+		j = 0;
+		while (broad->targets[j])
+		{
+			ok_createsignal(&sig, broad->targets[j], NULL, LOW);
+			++j;
+		}
+		while (sig)
+		{
+			run[0] = signals + 1;
+			ok_processsig2(&sig, ff, con, &iter, &high, &low, run);
+		}
+		++signals;
+		//ft_printf("low %5lli      high %5lli\n", low, high);
+	}
+	ft_printf("%5i %5i %5i %5i\n", run[1], run[2], run[3], run[4]);
+	return (run[1] * run[2] * run[3] * run[4]);
+}
+
+void	ok_update2(char **line, long long *ptot, int i, int j)
+{
+	t_ff		ff[50];
+	t_con		con[10];
+	t_broadcast	broad;
+	long long	r;
+	int			f;
+	int			c;
+
+	j = 0;
+	r = 0;
+	f = 0;
+	c = 0;
+	i = 0;
+	while (line[j])
+	{
+		if (line[j][0] == '%')
+		{
+			ok_createff(&ff[f], line[j]);
+			++f;
+		}
+		else if (line[j][0] == '&')
+		{
+			ok_createcon(&con[c], line[j]);
+			++c;
+		}
+		else
+		{
+			ok_createbroad(&broad, line[j]);
+		}
+		++j;
+	}
+	ff[f].name[0] = 0;
+	con[c].name[0] = 0;
+	ok_updatecon(ff, con, f, c);
+	ft_printf("broadcast -> ");
+	j = 0;
+	while (broad.targets[j])
+		ft_printf("%s ", broad.targets[j++]);
+	ft_printf("\n");
+	i = 0;
+	while (i < c)
+	{
+		j = 0;		
+		while (con[i].source[j])
+			ft_printf(" %s ", con[i].source[j++]);
+		ft_printf(" -> con %s -> ", con[i].name);
+		j = 0;
+		while (con[i].targets[j])
+			ft_printf("%s ", con[i].targets[j++]);
+		ft_printf("\n");
+		++i;
+	}
+	i = 0;
+	while (i < f)
+	{
+		j = 0;		
+		ft_printf("ff %s -> ", ff[i].name);
+		j = 0;
+		while (ff[i].targets[j])
+			ft_printf("%s ", ff[i].targets[j++]);
+		ft_printf("\n");
+		++i;
+	}
+	r = ok_runsignals2(&broad, ff, con);
+	*ptot = r;
+}
 
 int	main(void)
 {
@@ -518,7 +660,7 @@ int	main(void)
 	j = 0;
 	ok_update(line, &total[0], i, j);
 	ft_printf("t1=%5lld\n", total[0]);
-	//ok_update2(line, &total[1], i, j);
+	ok_update2(line, &total[1], i, j);
 	//816870672 too low
 	ft_printf("t2=%5lld\n", total[1]);
 	ft_free_split(&line);
