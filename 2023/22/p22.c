@@ -6,7 +6,7 @@
 /*   By: okraus <okraus@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 09:02:42 by okraus            #+#    #+#             */
-/*   Updated: 2023/12/22 08:30:31 by okraus           ###   ########.fr       */
+/*   Updated: 2023/12/22 12:43:32 by okraus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@ typedef struct s_brick
 	int		width;
 	int		length;
 	int		height;
+	int		above[100];
+	int		below[100];
 }	t_brick;
 
 void	ok_fillmap(int map[HEIGHT][LENGTH][WIDTH], t_brick brick[1500])
@@ -85,6 +87,83 @@ void	ok_fillmap(int map[HEIGHT][LENGTH][WIDTH], t_brick brick[1500])
 	}
 }
 
+void	ok_printmap2(int map[HEIGHT][LENGTH][WIDTH], t_brick brick[1500])
+{
+	int	z;
+	int	y;
+	int	x;
+	int	c;
+	int	i;
+
+	z = HEIGHT / 2 - 1;
+	while (z >= 0)
+	{
+		y = 0;
+		ft_printf("%3i|", z);
+		while (y < LENGTH)
+		{
+			x = 0;
+			while (x < WIDTH)
+			{
+				if (map[z][y][x])
+				{
+					i =  map[z][y][x];
+					if (brick[i - 1].destroy == 1)
+						c = (((i / 4) + 12 * i) % 64 + 192) << 16
+						| ((32 + (i / 4) + 34 * i) % 64) << 8
+						| (((i / 4) + i * 16) % 64);
+					else
+						c = (((i / 4) + 12 * i) % 64 + 192) << 16
+						| ((32 + (i / 4) + 34 * i) % 64 + 192) << 8
+						| (((i / 4) + i * 16) % 64 + 192);
+					ft_printf("%.*^*C%i%C", 0, c, map[z][y][x] % 10);
+				}
+				else
+					ft_printf(" ");
+				++x;
+			}
+			ft_printf("|");
+			++y;
+		}
+		ft_printf("\n");
+		--z;
+	}
+	y = 0;
+	z = 0;
+	while (z < 10)
+	{
+		ft_printf("%3i\n", z);
+		y = 0;
+		while (y < LENGTH)
+		{
+			x = 0;
+			while (x < WIDTH)
+			{
+				if (map[z][y][x])
+				{
+					i =  map[z][y][x];
+					if (brick[i - 1].destroy == 1)
+						c = (((i / 4) + 12 * i) % 64 + 192) << 16
+						| ((32 + (i / 4) + 34 * i) % 64) << 8
+						| (((i / 4) + i * 16) % 64);
+					else
+						c = (((i / 4) + 12 * i) % 64 + 192) << 16
+						| ((32 + (i / 4) + 34 * i) % 64 + 192) << 8
+						| (((i / 4) + i * 16) % 64 + 192);
+					ft_printf("%.*^*C%4i%C", 0, c, map[z][y][x]);
+				}
+				else
+					ft_printf("    ");
+				++x;
+			}
+			ft_printf("\n");
+			++y;
+		}
+		ft_printf("\n");
+		++z;
+	}
+}
+
 void	ok_printmap(int map[HEIGHT][LENGTH][WIDTH])
 {
 	int	z;
@@ -121,36 +200,62 @@ void	ok_printmap(int map[HEIGHT][LENGTH][WIDTH])
 		--z;
 	}
 	y = 0;
-	z = 1;
-	while (y < LENGTH)
+	z = 34;
+	while (z < 38)
 	{
-		x = 0;
-		while (x < WIDTH)
+		ft_printf("%3i\n", z);
+		y = 0;
+		while (y < LENGTH)
 		{
-			if (map[z][y][x])
+			x = 0;
+			while (x < WIDTH)
 			{
-				i =  map[z][y][x];
-				c = (((i / 4) + 12 * i) % 64 + 192) << 16
-					| ((32 + (i / 4) + 34 * i) % 64 + 192) << 8
-					| (((i / 4) + i * 16) % 64 + 192);
-				ft_printf("%.*^*C%4i%C", 0, c, map[z][y][x]);
+				if (map[z][y][x])
+				{
+					i =  map[z][y][x];
+					c = (((i / 4) + 12 * i) % 64 + 192) << 16
+						| ((32 + (i / 4) + 34 * i) % 64 + 192) << 8
+						| (((i / 4) + i * 16) % 64 + 192);
+					ft_printf("%.*^*C%4i%C", 0, c, map[z][y][x]);
+				}
+				else
+					ft_printf("    ");
+				++x;
 			}
-			else
-				ft_printf("    ");
-			++x;
+			ft_printf("\n");
+			++y;
 		}
 		ft_printf("\n");
-		++y;
+		++z;
 	}
 }
 
 void	ok_inspectbrick(t_brick brick)
 {
+	int	i;
+
 	ft_printf("brick id %4i,    destroy %i\n", brick.id, brick.destroy);
 	ft_printf("x1 = %i, y1 = %i, z1 = %3i\n", brick.x1, brick.y1, brick.z1);
 	ft_printf("x2 = %i, y2 = %i, z2 = %3i\n", brick.x2, brick.y2, brick.z2);
 	ft_printf("w =  %i, l =  %i, h =  %3i\n", brick.width, brick.length, brick.height);
-	ft_printf("PN(brick.width) %i\n", PN(brick.width));
+	i = 0;
+	ft_printf("Above: ");
+	while (i < 100)
+	{
+		if (brick.above[i])
+			ft_printf(" %4i ", brick.above[i]);
+		++i;
+	}
+	ft_printf("\n");
+	ft_printf("Below: ");
+	i = 0;
+	while (i < 100)
+	{
+		if (brick.below[i])
+			ft_printf(" %4i ", brick.below[i]);
+		++i;
+	}
+	ft_printf("\n");
 }
 
 int	ok_checkfall(int map[HEIGHT][LENGTH][WIDTH], int z, int y, int x)
@@ -158,6 +263,10 @@ int	ok_checkfall(int map[HEIGHT][LENGTH][WIDTH], int z, int y, int x)
 	int	id;
 
 	id = map[z][y][x];
+	// if (id == 982)
+	// {
+	// 	ft_printf("check 982 z = %i\n", z);
+	// }
 	if (map[z - 1][y][x])
 		return (0);
 	if (x < WIDTH - 1 && id == map[z][y][x + 1])
@@ -172,6 +281,10 @@ void	ok_fallbrick(int map[HEIGHT][LENGTH][WIDTH], int z, int y, int x)
 	int	id;
 
 	id = map[z][y][x];
+	// if (id == 982)
+	// {
+	// 	ft_printf("fall 982 z = %i\n", z);
+	// }
 	map[z - 1][y][x] = id;
 	map[z][y][x] = 0;
 
@@ -193,8 +306,8 @@ void	ok_fallbricks(int map[HEIGHT][LENGTH][WIDTH], t_brick brick[1500])
 	f = 2; //first level where something falls, could add last level with brick for optimization
 	while (f)
 	{
-		f = 0;
 		z = f;
+		f = 0;
 		while (z < HEIGHT)
 		{
 			y = 0;
@@ -207,11 +320,16 @@ void	ok_fallbricks(int map[HEIGHT][LENGTH][WIDTH], t_brick brick[1500])
 					{
 						//check if brick can fall
 						//fall brick and set f if f is not set
-						if (ok_checkfall(map, z, y, x))
+						// if (z < 2)
+						// 	ft_printf("zzz %i\n");
+						if (!((x && map[z][y][x] == map[z][y][x - 1]) || (y && map[z][y][x] == map[z][y - 1][x])))
 						{
-							ok_fallbrick(map, z, y, x);
-							if(!f)
-								f = z;
+							if (ok_checkfall(map, z, y, x))
+							{
+								ok_fallbrick(map, z, y, x);
+								if(!f)
+									f = z;
+							}
 						}
 					}
 					++x;
@@ -224,6 +342,210 @@ void	ok_fallbricks(int map[HEIGHT][LENGTH][WIDTH], t_brick brick[1500])
 	(void)brick;
 }
 
+int	ok_supported(int map[HEIGHT][LENGTH][WIDTH], int z, int id)
+{
+	int	x;
+	int	y;
+	int	below;
+
+	if (!id)
+		return (1);
+	y = 0;
+	if (id == 982)
+		ft_printf("982\n");
+	if (id == 378)
+		ft_printf("378\n");
+	below = 0;
+	while (y < LENGTH)
+	{
+		x = 0;
+		while (x < WIDTH)
+		{
+			if (map[z][y][x] == id && map[z - 1][y][x] && !below)
+			{
+				below = map[z - 1][y][x];
+			}
+			else if (map[z][y][x] == id && map[z - 1][y][x] && map[z - 1][y][x] != below)
+				return (1);
+			++x;
+		}
+		++y;
+	}
+	if (id == 982)
+		ft_printf("982 not supported %i\n", below);
+	if (id == 378)
+		ft_printf("378 not supported %i\n", below);
+	return (0);
+}
+
+int	ok_checkbrick(int map[HEIGHT][LENGTH][WIDTH], int z, int y, int x)
+{
+	int	id;
+	int	above[10];
+	int	i;
+
+	id = map[z][y][x];
+	//check bricks above if they have different support
+	if (id == 982)
+		ft_printf("check 982\n");
+	if (id == 378)
+		ft_printf(" check 378\n");
+	if (map[z + 1][y][x] == id)
+		return (ok_checkbrick(map, z + 1, y, x));
+	i = 0;
+	while (i < 10)
+	{
+		above[i] = 0;
+		++i;
+	}
+	i = 0;
+	while (x + i < WIDTH - 1 && id == map[z][y][x + i])
+	{
+		// if (id == 982)
+		// 	ft_printf("check x982 %i\n", i);
+		above[i] = map[z + 1][y][x + i];
+		++i;
+	}
+	while (y + i < LENGTH - 1 && id == map[z][y + i][x])
+	{
+		// if (id == 982)
+		// 	ft_printf("check y982 %i y %i\n", i, y);
+		above[i] = map[z + 1][y + i][x];
+		// if (id == 982)
+		// 	ft_printf("check y982 y + 1 %i map %i\n", y + 1, map[z][y + i][x]);
+		// if (id == 982)
+		// 	ft_printf("Condition1 %i %i total %i\n", y + i < LENGTH - 1, id == map[z][y + i][x], y + i < LENGTH - 1 && id == map[z][y + i][x]);
+		++i;
+		// if (id == 982)
+		// 	ft_printf("Condition2  %i %i total %i\n", y + i < LENGTH - 1, id == map[z][y + i][x], y + i < LENGTH - 1 && id == map[z][y + i][x]);
+	}
+	i = 0;
+	while (i < 10)
+	{
+		if (!ok_supported(map, z + 1, above[i]))
+			return (0);
+		++i;
+	}
+	return (1);
+}
+
+void	ok_checkbricks(int map[HEIGHT][LENGTH][WIDTH], t_brick brick[1500])
+{
+	int	z;
+	int	y;
+	int	x;
+
+	z = 0;
+	while (z < HEIGHT)
+	{
+		y = 0;
+		while (y < LENGTH)
+		{
+			x = 0;
+			while (x < WIDTH)
+			{
+				if (map[z][y][x] && !brick[map[z][y][x] - 1].destroy)
+				{
+					//check if brick can fall
+					//fall brick and set f if f is not set
+					// if (z < 2)
+					// 	ft_printf("zzz %i\n");
+					if (ok_checkbrick(map, z, y, x))
+					{
+						brick[map[z][y][x] - 1].destroy = 1;
+					}
+					else
+						brick[map[z][y][x] - 1].destroy = -1;
+				}
+				++x;
+			}
+			++y;
+		}
+		++z;
+	}
+}
+
+void	ok_fillbricks(int map[HEIGHT][LENGTH][WIDTH], t_brick brick[1500])
+{
+	int	z;
+	int	y;
+	int	x;
+	int	id;
+
+	z = 1;
+	while (z < HEIGHT)
+	{
+		y = 0;
+		while (y < LENGTH)
+		{
+			x = 0;
+			while (x < WIDTH)
+			{
+				if (map[z][y][x])
+				{
+					id = map[z][y][x];
+					if (map[z + 1][y][x] != id)
+						brick[id - 1].above[y * 10 + x] = map[z + 1][y][x];
+					if (map[z - 1][y][x] != id)
+						brick[id - 1].below[y * 10 + x] = map[z - 1][y][x];
+				}
+				++x;
+			}
+			++y;
+		}
+		++z;
+	}
+}
+
+long long	ok_count(t_brick brick[1500])
+{
+	long long	r;
+	int			i;
+
+	r = 0;
+	i = 0;
+	while (brick[i].id)
+	{
+		if (brick[i].destroy == 1)
+			++r;
+		++i;
+	}
+	return (r);
+}
+
+void	ok_checkbricks2(t_brick brick[1500])
+{
+	int	i;
+	int	j;
+	int	k;
+
+	i = 0;
+	while (brick[i].id)
+	{
+		j = 0;
+		while (j < 100)
+		{
+			if (brick[i].above[j])
+			{
+				k = 0;
+				brick[i].destroy = -1;
+				while (k < 100)
+				{
+					if (brick[brick[i].above[j] - 1].below[k] && brick[brick[i].above[j] - 1].below[k] != brick[i].id)
+						brick[i].destroy = 1;
+					++k;
+				}
+				if (brick[i].destroy == -1)
+					break ;
+			}
+			++j;
+		}
+		if (!brick[i].destroy)
+			brick[i].destroy = 1;
+		++i;
+	}
+}
+
 long long	ok_process(int map[HEIGHT][LENGTH][WIDTH], t_brick brick[1500])
 {
 	long long	r;
@@ -231,16 +553,31 @@ long long	ok_process(int map[HEIGHT][LENGTH][WIDTH], t_brick brick[1500])
 	//fill map first zeroes, then bricks
 	ok_fillmap(map, brick);
 	ok_printmap(map);
-	ok_inspectbrick(brick[151]);
-	ok_inspectbrick(brick[305]);
-	ok_inspectbrick(brick[1062]);
-	ok_inspectbrick(brick[677]);
-	ok_inspectbrick(brick[451]);
-	ok_inspectbrick(brick[438]);
 	ok_fallbricks(map, brick);
-	ok_printmap(map);
-	//check
+	ok_fallbricks(map, brick);
+	ok_fallbricks(map, brick);
+	ok_fallbricks(map, brick);
+	ok_fallbricks(map, brick);
+	ok_fallbricks(map, brick);
+	ok_fallbricks(map, brick);
+	ok_fallbricks(map, brick);
+	ok_fallbricks(map, brick);
+	ok_fallbricks(map, brick);
+	ok_fallbricks(map, brick);
+	ok_fallbricks(map, brick);
+	ok_fallbricks(map, brick);
+	//ok_fallbricks(map, brick);
+	ok_fillbricks(map, brick);
+	//check for destruction
+	//ok_checkbricks(map, brick);
+	ok_checkbricks2(brick);
+	ok_printmap2(map, brick);
+	ok_inspectbrick(brick[1]);
+	ok_inspectbrick(brick[2]);
+	ok_inspectbrick(brick[4]);
 	r = 0;
+	//count bricks that can be destroyed;
+	r = ok_count(brick);
 	return (r);
 }
 
@@ -268,6 +605,13 @@ void	ok_update(char **line, long long *ptot, int i, int j)
 		brick[j].width = brick[j].x2 - brick[j].x1;
 		brick[j].length = brick[j].y2 - brick[j].y1;
 		brick[j].height = brick[j].z2 - brick[j].z1;
+		i = 0;
+		while (i < 100)
+		{
+			brick[j].above[i] = 0;
+			brick[j].below[i] = 0;
+			++i;
+		}
 		++j;
 	}
 	brick[j].id = 0;
@@ -301,3 +645,7 @@ int	main(void)
 	ft_free_split(&line);
 	return (0);
 }
+
+//484 too low
+//560 too high
+//524 someone elses
