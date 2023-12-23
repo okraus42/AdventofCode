@@ -6,7 +6,7 @@
 /*   By: okraus <okraus@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 09:02:42 by okraus            #+#    #+#             */
-/*   Updated: 2023/12/22 12:43:32 by okraus           ###   ########.fr       */
+/*   Updated: 2023/12/22 18:55:47 by okraus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 #define LENGTH 10
 #define HEIGHT 400
 
-#define INPUT "input"
+#define INPUT "inputtest"
 
 #define ABS(a) ((a > 0) * a + (a < 0) * a)
 #define PN(a) ((a > 0) - (a < 0))
@@ -32,6 +32,9 @@ typedef struct s_brick
 	int		x2;
 	int		y2;
 	int		z2;
+	int		z;
+	int		zd;
+	int		supporting;
 	int		width;
 	int		length;
 	int		height;
@@ -56,7 +59,10 @@ void	ok_fillmap(int map[HEIGHT][LENGTH][WIDTH], t_brick brick[1500])
 			x = 0;
 			while (x < WIDTH)
 			{
-				map[z][y][x] = 0;
+				if (!z)
+					map[z][y][x] = 1;
+				else
+					map[z][y][x] = 0;
 				++x;
 			}
 			++y;
@@ -239,6 +245,7 @@ void	ok_inspectbrick(t_brick brick)
 	ft_printf("x2 = %i, y2 = %i, z2 = %3i\n", brick.x2, brick.y2, brick.z2);
 	ft_printf("w =  %i, l =  %i, h =  %3i\n", brick.width, brick.length, brick.height);
 	i = 0;
+	ft_printf("new z %3i, zd %3i, SUPPORTING %5i\n", brick.z, brick.zd, brick.supporting);
 	ft_printf("Above: ");
 	while (i < 100)
 	{
@@ -472,8 +479,8 @@ void	ok_fillbricks(int map[HEIGHT][LENGTH][WIDTH], t_brick brick[1500])
 	int	x;
 	int	id;
 
-	z = 1;
-	while (z < HEIGHT)
+	z = 0;
+	while (z < HEIGHT - 1)
 	{
 		y = 0;
 		while (y < LENGTH)
@@ -486,7 +493,7 @@ void	ok_fillbricks(int map[HEIGHT][LENGTH][WIDTH], t_brick brick[1500])
 					id = map[z][y][x];
 					if (map[z + 1][y][x] != id)
 						brick[id - 1].above[y * 10 + x] = map[z + 1][y][x];
-					if (map[z - 1][y][x] != id)
+					if (z && map[z - 1][y][x] != id)
 						brick[id - 1].below[y * 10 + x] = map[z - 1][y][x];
 				}
 				++x;
@@ -519,7 +526,7 @@ void	ok_checkbricks2(t_brick brick[1500])
 	int	j;
 	int	k;
 
-	i = 0;
+	i = 1;
 	while (brick[i].id)
 	{
 		j = 0;
@@ -572,9 +579,9 @@ long long	ok_process(int map[HEIGHT][LENGTH][WIDTH], t_brick brick[1500])
 	//ok_checkbricks(map, brick);
 	ok_checkbricks2(brick);
 	ok_printmap2(map, brick);
-	ok_inspectbrick(brick[1]);
-	ok_inspectbrick(brick[2]);
-	ok_inspectbrick(brick[4]);
+	ok_inspectbrick(brick[0]);
+	ok_inspectbrick(brick[1319]);
+	ok_inspectbrick(brick[958]);
 	r = 0;
 	//count bricks that can be destroyed;
 	r = ok_count(brick);
@@ -587,36 +594,491 @@ void	ok_update(char **line, long long *ptot, int i, int j)
 	t_brick		brick[1500];
 	long long	r;
 
+	brick[0].id = 1;
+	brick[0].destroy = 0;
+	brick[0].x1 = 0;
+	brick[0].y1 = 0;
+	brick[0].z1 = 0;
+	i = 0;
+	while (line[j][i] != '~')
+		++i;
+	++i;
+	brick[0].x2 = 9;
+	brick[0].y2 = 9;
+	brick[0].z2 = 0;
+	brick[0].width = brick[0].x2 - brick[0].x1;
+	brick[0].length = brick[0].y2 - brick[0].y1;
+	brick[0].height = brick[0].z2 - brick[0].z1;
+	i = 0;
+	brick[0].z = 0;
+	brick[0].zd = 0;
+	while (i < 100)
+	{
+		brick[0].above[i] = 0;
+		brick[0].below[i] = 0;
+		++i;
+	}
 	j = 0;
 	while (line[j])
 	{
-		brick[j].id = j + 1;
-		brick[j].destroy = 0;
-		brick[j].x1 = ft_atoi(&line[j][0]);
-		brick[j].y1 = ft_atoi(&line[j][2]);
-		brick[j].z1 = ft_atoi(&line[j][4]);
+		brick[j + 1].id = j + 2;
+		brick[j + 1].destroy = 0;
+		brick[j + 1].x1 = ft_atoi(&line[j][0]);
+		brick[j + 1].y1 = ft_atoi(&line[j][2]);
+		brick[j + 1].z1 = ft_atoi(&line[j][4]);
 		i = 0;
 		while (line[j][i] != '~')
 			++i;
 		++i;
-		brick[j].x2 = ft_atoi(&line[j][i]);
-		brick[j].y2 = ft_atoi(&line[j][i + 2]);
-		brick[j].z2 = ft_atoi(&line[j][i + 4]);
-		brick[j].width = brick[j].x2 - brick[j].x1;
-		brick[j].length = brick[j].y2 - brick[j].y1;
-		brick[j].height = brick[j].z2 - brick[j].z1;
+		brick[j + 1].x2 = ft_atoi(&line[j][i]);
+		brick[j + 1].y2 = ft_atoi(&line[j][i + 2]);
+		brick[j + 1].z2 = ft_atoi(&line[j][i + 4]);
+		brick[j + 1].width = brick[j + 1].x2 - brick[j + 1].x1;
+		brick[j + 1].length = brick[j + 1].y2 - brick[j + 1].y1;
+		brick[j + 1].height = brick[j + 1].z2 - brick[j + 1].z1;
 		i = 0;
+		brick[j + 1].z = 0;
+		brick[j + 1].zd = 0;
 		while (i < 100)
 		{
-			brick[j].above[i] = 0;
-			brick[j].below[i] = 0;
+			brick[j + 1].above[i] = 0;
+			brick[j + 1].below[i] = 0;
 			++i;
 		}
 		++j;
 	}
-	brick[j].id = 0;
+	brick[j + 1].id = 0;
 	// print bricks;
 	r = ok_process(map, brick);
+	*ptot = r;
+}
+
+void	ok_sortbricks(t_brick brick[1500])
+{
+	int	i;
+	int	j;
+	int	s;
+	int	tmp;
+
+	j = 0;
+	while (brick[j].id)
+	{
+		s = 1;
+		while (s)
+		{
+			s = 0;
+			i = 0;
+			while (i < LENGTH * WIDTH - 1)
+			{
+				if (brick[j].above[i] < brick[j].above[i + 1])
+				{
+					tmp = brick[j].above[i];
+					brick[j].above[i] = brick[j].above[i + 1];
+					brick[j].above[i + 1] = tmp;
+					s = 1;
+				}
+				if (brick[j].above[i] == brick[j].above[i + 1])
+					brick[j].above[i + 1] = 0;
+				++i;
+			}
+		}
+		s = 1;
+		while (s)
+		{
+			s = 0;
+			i = 0;
+			while (i < LENGTH * WIDTH - 1)
+			{
+				if (brick[j].below[i] < brick[j].below[i + 1])
+				{
+					tmp = brick[j].below[i];
+					brick[j].below[i] = brick[j].below[i + 1];
+					brick[j].below[i + 1] = tmp;
+					s = 1;
+				}
+				if (brick[j].below[i] == brick[j].below[i + 1])
+					brick[j].below[i + 1] = 0;
+				++i;
+			}
+		}
+		++j;
+	}
+}
+
+void	ok_getz(int map[HEIGHT][LENGTH][WIDTH], t_brick brick[1500])
+{
+	int	z;
+	int	y;
+	int	x;
+	int	id;
+
+	z = 0;
+	while(z < HEIGHT)
+	{
+		y = 0;
+		while(y < LENGTH)
+		{
+			x = 0;
+			while (x < WIDTH)
+			{
+				if (map[z][y][x])
+				{
+					id = map[z][y][x];
+					brick[id - 1].z = z;
+				}
+				++x;
+			}
+			++y;
+		}
+		++z;
+	}
+}
+
+void	ok_sortbelows(int belows[HEIGHT][100], int z)
+{
+	int	i;
+	int	s;
+	int	tmp;
+
+	i = 0;
+	s = 1;
+	while (s)
+	{
+		s = 0;
+		i = 0;
+		while (i < 99)
+		{
+			if (belows[z][i] < belows[z][i + 1])
+			{
+				tmp = belows[z][i];
+				belows[z][i] = belows[z][i + 1];
+				belows[z][i + 1] = tmp;
+				s = 1;
+			}
+			if (belows[z][i] && belows[z][i] == belows[z][i + 1])
+			{
+				belows[z][i + 1] = 0;
+				s = 1;
+			}
+			++i;
+		}
+	}
+}
+
+void	ok_fillbelows(int belows[HEIGHT][100], int z, t_brick brick[1500])
+{
+	int	i;
+	int	j;
+	int	k;
+	int	id;
+
+	i = 0;
+	j = 0;
+	while (belows[z + 1][i])
+	{
+		id = belows[z + 1][i] - 1;
+		if (brick[id].height && brick[brick[id].below[0] - 1].z < z)
+		{
+			belows[z][j] = belows[z + 1][i];
+			++j;
+		}
+		else
+		{
+			k = 0;
+			while (brick[id].below[k])
+			{
+				belows[z][j] = brick[id].below[k];
+				++j;
+				++k;
+			}
+		}
+		++i;
+	}
+	ok_sortbelows(belows, z);
+}
+
+void	ok_getzd(int map[HEIGHT][LENGTH][WIDTH], t_brick brick[1500])
+{
+	int	i;
+	int	j;
+	int	z;
+	int	belows[HEIGHT][100];
+
+	i = 1;
+	while (brick[i].id)
+	{
+		//ft_printf("zd %i\n", i);
+		z = brick[i].z - 1;
+		j = 0;
+		while (brick[i].below[j])
+		{
+			belows[z][j] = brick[i].below[j];
+			++j;
+		}
+		ok_sortbelows(belows, z);
+		belows[z][j] = 0;
+		while (belows[z][1])
+		{
+			--z;
+			ok_fillbelows(belows, z, brick);
+			if (!belows[z][0])
+				ft_printf("FATA: ERROR\n");
+		}
+		brick[i].zd = z;
+		++i;
+	}
+	(void)map;
+}
+
+void	ok_fillaboves(int aboves[HEIGHT][100], int z, t_brick brick[1500])
+{
+	int	i;
+	int	j;
+	int	k;
+	int	id;
+
+	i = 0;
+	j = 0;
+	while (aboves[z - 1][i])
+	{
+		id = aboves[z - 1][i] - 1;
+		k = 0;
+		while (brick[id].above[k])
+		{
+			aboves[z][j] = brick[id].above[k];
+			++j;
+			++k;
+		}
+		++i;
+	}
+	ok_sortbelows(aboves, z);
+}
+
+int	ok_count2(int uniques[1500], int z, t_brick brick[1500])
+{
+	int	r;
+	int	k;
+	int zz;
+
+	zz = z;
+	r = 0;
+	k = 0;
+	while (uniques[k])
+	{
+		if (brick[uniques[k] - 1].zd >= zz)
+			++r;
+		++k;
+	}
+	return (r);
+}
+
+void	ok_sortuniques(int uniques[1500])
+{
+	int	i;
+	int	s;
+	int	tmp;
+
+	i = 0;
+	s = 1;
+	while (s)
+	{
+		s = 0;
+		i = 0;
+		while (i < 1499)
+		{
+			if (uniques[i] < uniques[i + 1])
+			{
+				tmp = uniques[i];
+				uniques[i] = uniques[i + 1];
+				uniques[i + 1] = tmp;
+				s = 1;
+			}
+			if (uniques[i] && uniques[i] == uniques[i + 1])
+			{
+				uniques[i + 1] = 0;
+				s = 1;
+			}
+			++i;
+		}
+	}
+}
+
+void	ok_filluniques(int uniques[1500], int z,int aboves[HEIGHT][100])
+{
+	int	i;
+	int	k;
+
+	i = 0;
+	while (i < 1500)
+		uniques[i++] = 0;
+	while (aboves[z][0])
+	{
+		k = 0;
+		while (aboves[z][k])
+		{
+			uniques[i] = aboves[z][k];
+			++k;
+			++i;
+		}
+		ok_sortuniques(uniques);
+		i = 0;
+		while (uniques[i])
+			++i;
+		++z;
+	}
+	uniques[i] = 0;
+}
+
+void	ok_getsupporting(t_brick brick[1500])
+{
+	int	i;
+	int	j;
+	int	z;
+	int	aboves[HEIGHT][100];
+	int	uniques[1500];
+
+	i = 1;
+	while (brick[i].id)
+	{
+		ft_printf("supp %i\n", i);
+		z = brick[i].z + 1;
+		j = 0;
+		while (brick[i].above[j])
+		{
+			aboves[z][j] = brick[i].above[j];
+			++j;
+		}
+		ok_sortbelows(aboves, z);
+		aboves[z][j] = 0;
+		while (aboves[z][0])
+		{
+			++z;
+			aboves[z][0] = 0;
+			ok_fillaboves(aboves, z, brick);
+		}
+		ok_filluniques(uniques, brick[i].z + 1, aboves);
+		ft_printf("supp2 %i\n", i);
+		brick[i].supporting = ok_count2(uniques, brick[i].z, brick);
+		++i;
+	}
+}
+
+long long	ok_count22(t_brick brick[1500])
+{
+	int			i;
+	long long	r;
+
+	i = 1;
+	r = 0;
+	while (brick[i].id)
+	{
+		r += (long long)brick[i].supporting;
+		++i;
+	}
+	return (r);
+}
+
+long long	ok_process2(int map[HEIGHT][LENGTH][WIDTH], t_brick brick[1500])
+{
+	long long	r;
+
+	//fill map first zeroes, then bricks
+	ok_fillmap(map, brick);
+	ok_printmap(map);
+	ok_fallbricks(map, brick);
+	ok_fallbricks(map, brick);
+	ok_fallbricks(map, brick);
+	ok_fallbricks(map, brick);
+	ok_fallbricks(map, brick);
+	//ok_fallbricks(map, brick);
+	ok_fillbricks(map, brick);
+	//check for destruction
+	//ok_checkbricks(map, brick);
+	ok_checkbricks2(brick);
+	ok_printmap2(map, brick);
+	ok_sortbricks(brick);
+
+	ok_getz(map, brick);
+	ok_getzd(map, brick);
+	ok_getsupporting(brick);
+	ok_inspectbrick(brick[958]);
+	ok_inspectbrick(brick[0]);
+	ok_inspectbrick(brick[798]);
+	r = 0;
+	while (r < 10)
+	{
+		ft_printf("HELLO\nWORLD!!!\n\n");
+		ok_inspectbrick(brick[r]);
+		++r;
+	}
+	ok_inspectbrick(brick[r]);
+	//count bricks that can be destroyed;
+	r = ok_count22(brick);
+	return (r);
+}
+
+void	ok_update2(char **line, long long *ptot, int i, int j)
+{
+	int			map[HEIGHT][LENGTH][WIDTH];
+	t_brick		brick[1500];
+	long long	r;
+
+	brick[0].id = 1;
+	brick[0].destroy = 0;
+	brick[0].x1 = 0;
+	brick[0].y1 = 0;
+	brick[0].z1 = 0;
+	i = 0;
+	while (line[j][i] != '~')
+		++i;
+	++i;
+	brick[0].x2 = 9;
+	brick[0].y2 = 9;
+	brick[0].z2 = 0;
+	brick[0].width = brick[0].x2 - brick[0].x1;
+	brick[0].length = brick[0].y2 - brick[0].y1;
+	brick[0].height = brick[0].z2 - brick[0].z1;
+	i = 0;
+	brick[0].z = 0;
+	brick[0].zd = 0;
+	while (i < 100)
+	{
+		brick[0].above[i] = 0;
+		brick[0].below[i] = 0;
+		++i;
+	}
+	j = 0;
+	while (line[j])
+	{
+		brick[j + 1].id = j + 2;
+		brick[j + 1].destroy = 0;
+		brick[j + 1].x1 = ft_atoi(&line[j][0]);
+		brick[j + 1].y1 = ft_atoi(&line[j][2]);
+		brick[j + 1].z1 = ft_atoi(&line[j][4]);
+		i = 0;
+		while (line[j][i] != '~')
+			++i;
+		++i;
+		brick[j + 1].x2 = ft_atoi(&line[j][i]);
+		brick[j + 1].y2 = ft_atoi(&line[j][i + 2]);
+		brick[j + 1].z2 = ft_atoi(&line[j][i + 4]);
+		brick[j + 1].width = brick[j + 1].x2 - brick[j + 1].x1;
+		brick[j + 1].length = brick[j + 1].y2 - brick[j + 1].y1;
+		brick[j + 1].height = brick[j + 1].z2 - brick[j + 1].z1;
+		i = 0;
+		brick[j + 1].z = 0;
+		brick[j + 1].zd = 0;
+		while (i < 100)
+		{
+			brick[j + 1].above[i] = 0;
+			brick[j + 1].below[i] = 0;
+			++i;
+		}
+		++j;
+	}
+	brick[j + 1].id = 0;
+	// print bricks;
+	r = ok_process2(map, brick);
 	*ptot = r;
 }
 
@@ -640,12 +1102,15 @@ int	main(void)
 	j = 0;
 	ok_update(line, &total[0], i, j);
 	ft_printf("t1=%5lld\n", total[0]);
-	//ok_update2(line, &total[1], i, j);
+	ok_update2(line, &total[1], i, j);
 	ft_printf("t2=%5lld\n", total[1]);
 	ft_free_split(&line);
 	return (0);
 }
 
+//719024 too high
+
 //484 too low
 //560 too high
 //524 someone elses
+//503
