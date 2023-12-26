@@ -6,7 +6,7 @@
 /*   By: okraus <okraus@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 09:02:42 by okraus            #+#    #+#             */
-/*   Updated: 2023/12/25 08:25:26 by okraus           ###   ########.fr       */
+/*   Updated: 2023/12/26 11:12:27 by okraus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,7 +215,7 @@ long long	ok_magic(char dict[2000][4], t_connection c[5000])
 	while (dict[d][0])
 		++d;
 	r = 0;
-	z = 0;
+	z = 0;//226 next time
 	ft_printf("magic\n");
 	while (c[z].id1 || c[z].id2)
 	{
@@ -306,3 +306,5 @@ int	main(void)
 
 /// https://www.scaler.com/topics/data-structures/kargers-algorithm-for-minimum-cut/
 // instead of brute force
+
+//0-225 bruteforced in 27 hours
