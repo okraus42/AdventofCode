@@ -6,7 +6,7 @@
 /*   By: okraus <okraus@student.42prague.com>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/08 09:02:42 by okraus            #+#    #+#             */
-/*   Updated: 2023/12/26 19:22:44 by okraus           ###   ########.fr       */
+/*   Updated: 2023/12/26 19:28:59 by okraus           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -324,7 +324,7 @@ void	ok_visitall(t_node **nexus, int n, int steps, int *r)
 	}
 	//i do not know how to recursively free :()
 	ft_printf("freeing  %p \n", nex);
-	ok_free_nodes(&nex);
+	//ok_free_nodes(&nex);
 }
 
 long long	ok_magic(char **line)
