@@ -187,8 +187,9 @@ void	part2()
 	}
 	// regA = 174504540372800ULL;
 	// regA = 174577517266434; // too high
-	regA = 156985331106427 - 1;
+	regA = 156985331106427 - 1; //input the last best match
 	run_program(output, program, regA, regB, regC);
+	//reversing strings because apparently the last value is least affected by the register value change
 	std::reverse(output.begin(), output.end());
 	std::reverse(orig.begin(), orig.end());
 	std::cout << std::endl << orig << std::endl;
@@ -198,6 +199,7 @@ void	part2()
 	while (output != orig)
 	{
 		iter++;
+		//commented out but it was useful to get rough estimates and get the lenth right
 		// if (output.size() < orig.size())
 		// {
 		// 	// regA *= 2;
@@ -211,7 +213,7 @@ void	part2()
 			match = 0;
 			while (match < output.size() && output[match] == orig[match])
 				match++;
-			regA += 1;
+			regA += 1; // fine tune this value
 			if (match > oldmatch && output.size() == orig.size())
 			{
 				oldmatch = match;
