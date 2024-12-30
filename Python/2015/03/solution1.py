@@ -10,10 +10,19 @@ with open(FILE_NAME, 'r') as file:
 	content = file.read()
 
 result = 0
+x = 0
+y = 0
+houses = set()
+houses.add((0, 0))
 # Now, 'content' contains the file's content as a string
 for char in content:
-	if char == '(':
-		result += 1
-	if char == ')':
-		result -= 1
-print(result)
+	if char == '^':
+		y -= 1
+	elif char == 'v':
+		y += 1
+	elif char == '<':
+		x -= 1
+	elif char == '>':
+		x += 1
+	houses.add((x, y))
+print(len(houses))
