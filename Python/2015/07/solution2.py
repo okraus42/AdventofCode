@@ -10,17 +10,17 @@ parsed_lines = []
 def find_result(target_result):
 	for entry in parsed_lines:
 		if entry["outcome"] == target_result:
-			print(f"1:{entry}")
+			# print(f"1:{entry}")
 			if entry["operatorB"].isdigit():
 				b = int(entry["operatorB"]) & 0xFFFF
 			else:
-				print(f"looking for b: {entry['operatorB']}")
+				# print(f"looking for b: {entry['operatorB']}")
 				b = find_result(entry["operatorB"]) & 0xFFFF
 			if entry["operatorA"]:
 				if entry["operatorA"].isdigit():
 					a = int(entry["operatorA"]) & 0xFFFF
 				else:
-					print(f"looking for a: {entry['operatorA']}")
+					# print(f"looking for a: {entry['operatorA']}")
 					a = find_result(entry["operatorA"]) & 0xFFFF
 			if entry["operation"]:
 				if entry["operation"] == "AND" :
@@ -35,7 +35,7 @@ def find_result(target_result):
 					return (~b) & 0xFFFF
 			else :
 				return b & 0xFFFF
-	print (f"{target_result} not found")
+	# print (f"{target_result} not found")
 	return None  # Return None if the result is not found
 
 # Open the file in read mode
@@ -70,5 +70,10 @@ for line in lines:
 			"operatorB": operatorB,
 			"outcome": outcome,
 		})
+result = find_result("a")
+for entry in parsed_lines:
+	if entry["outcome"] == "b":
+		entry["operatorB"] = str(result)
+find_result.cache_clear()
 result = find_result("a")
 print(result)
