@@ -73,7 +73,7 @@ def animate(array_2d, r):
 						c += 1
 					else:
 						array_2d[y][x] = '.'
-		print_array(array_2d, i, c)
+		# print_array(array_2d, i, c)
 	# print_array(array_2d, i, c)
 	# c = count_hashes(array_2d)
 	return c
