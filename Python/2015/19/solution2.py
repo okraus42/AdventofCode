@@ -18,27 +18,35 @@ for line in lines:
 	elif len(words) == 1:
 		original = words[0]
 
-combos = set()
 result = 0
 
-for pair in pairs:
-	start = 0
-	while True:
-		 # Find the next occurrence of 'to_find'
-		index = original.find(pair[0], start)
-		if index == -1:
-			# No more occurrences found
-			break
+atoms = 0
+Ys = 0
+Ars = 0
+Rns = 0
 
-		# Replace the found occurrence
-		modified = (original[:index] + pair[1] + original[index + len(pair[0]):])
+# Iterate through the string to count uppercase atoms
+for char in original:
+	if char.isupper():
+		atoms += 1
 
-		# Add the new string to the list
-		combos.add(modified)
-
-		# Move start index to the next character after the current match
-		start = index + 1
-result = len(combos)
+# Manually check for 'Y', 'Ar', and 'Rn' occurrences
+i = 0
+while i < len(original):
+	# Check for 'Rn' first
+	if original[i:i+2] == 'Rn':
+		Rns += 1
+		i += 2  # Skip the next character since 'Rn' is 2 characters long
+	# Check for 'Ar'
+	elif original[i:i+2] == 'Ar':
+		Ars += 1
+		i += 2  # Skip the next character since 'Ar' is 2 characters long
+	# Check for 'Y'
+	elif original[i:i+1] == 'Y':
+		Ys += 1
+		i += 1  # Move by one character since 'Y' is 1 character long
+	else:
+		i += 1  # Move to the next character
+print("atoms: ", atoms, ", Ars ", Ars, ", Rns ", Rns, ", Ys ", Ys)
+result = atoms - Ars - Rns - 2 * Ys - 1
 print(result)
-
-# // try being greedy and replace the longest available word
