@@ -35,6 +35,3 @@ while (presents < input and house < limit):
 
 result = house - 1
 print(result)
-
-
-#   786241 too high
