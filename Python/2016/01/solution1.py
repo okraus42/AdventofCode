@@ -11,9 +11,5 @@ with open(FILE_NAME, 'r') as file:
 
 result = 0
 # Now, 'content' contains the file's content as a string
-for char in content:
-	if char == '(':
-		result += 1
-	if char == ')':
-		result -= 1
+
 print(result)
