@@ -10,12 +10,5 @@ with open(FILE_NAME, 'r') as file:
 	lines = file.readlines()
 
 result = 0
-# Now, 'content' contains the file's content as a string
-for line in lines:
-	numbers = line.split('x')
-	a, b, c = map(int, numbers)
-	s1 = a*b
-	s2 = a*c
-	s3 = b*c
-	result += 2*s1 + 2*s2 + 2*s3 + min(s1,s2,s3)
+# need to update
 print(result)
