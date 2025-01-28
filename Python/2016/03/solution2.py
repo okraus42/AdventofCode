@@ -7,37 +7,22 @@ FILE_NAME = 'input.txt'
 # Open the file in read mode
 with open(FILE_NAME, 'r') as file:
 	# Read the entire content of the file into a string
-	content = file.read()
+	lines = file.readlines()
 
-i = 0
-x1 = 0
-y1 = 0
-x2 = 0
-y2 = 0
-houses = set()
-houses.add((0, 0))
-# Now, 'content' contains the file's content as a string
-for char in content:
-	if i % 2:
-		if char == '^':
-			y1 -= 1
-		elif char == 'v':
-			y1 += 1
-		elif char == '<':
-			x1 -= 1
-		elif char == '>':
-			x1 += 1
-		houses.add((x1, y1))
-	else:
-		if char == '^':
-			y2 -= 1
-		elif char == 'v':
-			y2 += 1
-		elif char == '<':
-			x2 -= 1
-		elif char == '>':
-			x2 += 1
-		houses.add((x2, y2))
-	i += 1
-	
-print(len(houses))
+result = 0
+matrix = [list(map(int, line.split())) for line in lines]
+rows = len(matrix)
+columns = len(matrix[0])
+for x in range(columns):
+	y = 0
+	while y != rows:
+		if y == rows:
+			y = 0
+		num1 = matrix[y][x]
+		num2 = matrix[y + 1][x]
+		num3 = matrix[y + 2][x]
+		y += 3
+		sides = sorted([num1, num2, num3])
+		if (sides[0] + sides[1] > sides[2]):
+			result += 1
+print(result)
