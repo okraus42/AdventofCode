@@ -2,25 +2,25 @@
 
 import math
 import sys
+import hashlib
+
 FILE_NAME = 'input.txt'
 
 # Open the file in read mode
 with open(FILE_NAME, 'r') as file:
 	# Read the entire content of the file into a string
-	lines = file.readlines()
+	content = file.read()
 
-result = 0
-# Now, 'content' contains the file's content as a string
-for line in lines:
-	pairs = False
-	doubles = False
-	for i in range(len(line)):
-		if i > 1:
-			if line[i] == line[i - 2]:
-				doubles = True
-			pair = str(line[i - 2]) + str(line[i - 1])
-			if (not pairs):
-				pairs = pair in line[i:]
-	if (doubles and pairs):
-		result += 1
+extra = 0
+test = ['.', '.', '.', '.', '.', '.', '.', '.']
+while True:
+	md5_hash = hashlib.md5((content + str(extra)).encode()).hexdigest()
+	if md5_hash[:5] == '00000' and md5_hash[5] in "01234567":
+		pos = int(md5_hash[5])
+		if test[pos] == '.':
+			test[pos] = md5_hash[6]
+	if '.' not in test:
+		break
+	extra += 1
+result = ''.join(test)
 print(result)
