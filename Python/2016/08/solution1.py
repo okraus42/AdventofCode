@@ -12,5 +12,5 @@ result = 0
 for line in lines:
 	line = line.strip()
 
-result = real_chars - printed_chars
+
 print(result)
