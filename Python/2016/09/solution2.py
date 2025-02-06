@@ -1,45 +1,45 @@
 #!/usr/bin/python3
 
-
-import itertools
 FILE_NAME = 'input.txt'
 
-def add_distance(distances, location1, location2, distance):
-	key = tuple(sorted([location1, location2]))  # Ensure consistent key order
-	distances[key] = distance
-
-def get_distance(distances, location1, location2):
-	key = tuple(sorted([location1, location2]))  # Ensure consistent key order
-	return distances.get(key, "Distance not found")
-
-# Open the file in read mode
+# Open the file and read its content (using strip to remove extraneous whitespace)
 with open(FILE_NAME, 'r') as file:
-	# Read the entire content of the file into a string
-	lines = file.readlines()
+    s = file.read().strip()
 
-locations = set()
-distances = {}
-result = 0
-# Now, 'content' contains the file's content as a string
-for line in lines:
-	parts = line.split(" to ")
-	location1 = parts[0]  # "London"
-	rest = parts[1].split(" = ")
-	location2 = rest[0]  # "Dublin"
-	locations.add(location1)
-	locations.add(location2)
-	distance = int(rest[1])  # 464 (convert to integer)
-	add_distance(distances, location1, location2, distance)
+N = len(s)
+# dp[i] will store the decompressed length of s[i:]
+dp = [0] * (N + 1)
+dp[N] = 0  # Base: an empty string has length 0
 
-permutations = itertools.permutations(locations)
+# Process the string from rightmost character to the beginning.
+for i in range(N - 1, -1, -1):
+	if s[i] != '(':
+		# Normal character: count 1 plus whatever follows.
+		dp[i] = 1 + dp[i + 1]
+	else:
+		# We have encountered a marker starting at position i.
+		# Find the corresponding closing parenthesis.
+		j = s.find(')', i)
+		if j == -1:
+			raise ValueError("Malformed marker: no closing ')' found")
+		
+		# Extract the marker "AxB" (without the parentheses)
+		marker = s[i + 1:j]
+		try:
+			num_chars, repeat = map(int, marker.split('x'))
+		except ValueError:
+			raise ValueError("Malformed marker: expected two integers separated by 'x'")
+		
+		# The repeated segment is the next num_chars characters, starting at index j+1.
+		# Since dp[j+1] is the decompressed length of s[j+1:],
+		# and dp[j+1+num_chars] is the decompressed length of s[j+1+num_chars:],
+		# the decompressed length of the segment s[j+1:j+1+num_chars] is:
+		L_segment = dp[j + 1] - dp[min(j + 1 + num_chars, N)]
+		
+		# The decompressed length starting at i is:
+		#   (the repeated segment expanded) + (the remainder of the string after the segment)
+		dp[i] = repeat * L_segment + dp[min(j + 1 + num_chars, N)]
 
-# Print each permutation
-for perm in permutations:
-	previous_location = perm[0]
-	distance = 0
-	for location in perm[1:]:
-		distance += get_distance(distances, previous_location, location)
-		previous_location = location
-	if distance > result:
-		result = distance
+# The final decompressed length is dp[0]
+result = dp[0]
 print(result)
