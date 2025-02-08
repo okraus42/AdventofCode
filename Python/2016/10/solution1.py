@@ -7,4 +7,5 @@ with open(FILE_NAME, 'r') as file:
 	# Read the entire content of the file into a string
 	content = file.read()
 result = 0
+
 print(result)
