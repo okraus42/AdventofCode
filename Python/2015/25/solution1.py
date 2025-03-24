@@ -10,6 +10,6 @@ with open(FILE_NAME, 'r') as file:
 # Parse instructions from the file
 for line in lines:
 	pass
-# add code here soonish.
+# add code here soonish...
 result = 0
 print(result)
